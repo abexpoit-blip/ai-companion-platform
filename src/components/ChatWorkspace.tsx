@@ -38,6 +38,7 @@ import {
 } from "@/lib/chat-api";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
+import nexusLogo from "@/assets/nexus-x-logo.png";
 import { ThemePicker } from "@/components/ThemePicker";
 import { Link } from "@tanstack/react-router";
 import { PreviewProvider, usePreview, isPreviewable } from "@/components/preview-context";
