@@ -140,7 +140,7 @@ function buildFiles(payload: PreviewPayload): { template: SpTemplate; files: San
     return {
       template: "react",
       files: {
-        "/App.js": { code: payload.code },
+        "/App.js": { code: ensureDefaultExport(payload.code) },
         "/index.js": { code: REACT_INDEX, hidden: true },
         "/styles.css": { code: REACT_STYLES, hidden: true },
       },
@@ -150,8 +150,8 @@ function buildFiles(payload: PreviewPayload): { template: SpTemplate; files: San
     return {
       template: "react-ts",
       files: {
-        "/App.tsx": { code: payload.code },
-        "/index.tsx": { code: REACT_INDEX.replace('"./App"', '"./App"'), hidden: true },
+        "/App.tsx": { code: ensureDefaultExport(payload.code) },
+        "/index.tsx": { code: REACT_INDEX, hidden: true },
         "/styles.css": { code: REACT_STYLES, hidden: true },
       },
     };
