@@ -1082,12 +1082,12 @@ function EmptyState({ onPick, model }: { onPick: (q: string) => void; model: AIM
               key={b.key}
               onClick={() => onPick(b.prompt)}
               className={cn(
-                "group relative flex flex-col overflow-hidden rounded-3xl border border-slate-200/80 p-5 text-left transition hover:border-white/20 sm:p-6",
+                "group relative flex flex-col overflow-hidden rounded-3xl border border-slate-200/80 p-5 text-left transition hover:border-[color:var(--color-iris)]/40 sm:p-6",
                 b.cls,
               )}
               style={{
-                background: "linear-gradient(180deg, rgba(20,20,32,0.55), rgba(10,10,18,0.55))",
-                boxShadow: "inset 0 1px 0 rgba(200,220,255,0.05)",
+                background: "linear-gradient(180deg, rgba(255,255,255,0.92), rgba(250,250,255,0.78))",
+                boxShadow: "0 20px 50px -30px rgba(80,90,160,0.35), inset 0 1px 0 rgba(255,255,255,0.9)",
               }}
             >
               {/* accent glow */}
@@ -1100,7 +1100,7 @@ function EmptyState({ onPick, model }: { onPick: (q: string) => void; model: AIM
               <span aria-hidden className="pointer-events-none absolute inset-x-0 -top-px h-px opacity-0 transition group-hover:opacity-100" style={{ background: `linear-gradient(90deg, transparent, ${b.accent}, transparent)` }} />
 
               <div className="relative flex items-start justify-between gap-3">
-                <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200" style={{ background: `linear-gradient(135deg, ${b.accent} / 0.25, transparent)`, backgroundColor: "rgba(255,255,255,0.03)" }}>
+                <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200" style={{ background: "rgba(255,255,255,0.6)" }}>
                   <I className="h-5 w-5" style={{ color: b.accent, filter: `drop-shadow(0 0 6px ${b.accent})` }} />
                 </div>
                 <span className="text-[9.5px] font-semibold uppercase tracking-[0.2em] text-slate-500">{b.eyebrow}</span>
