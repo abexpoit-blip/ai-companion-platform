@@ -4,6 +4,7 @@ import {
   SandpackCodeEditor,
   SandpackPreview,
   SandpackConsole,
+  type SandpackFiles,
 } from "@codesandbox/sandpack-react";
 import type { PreviewPayload } from "./preview-context";
 
