@@ -337,7 +337,7 @@ function ChatWorkspaceInner() {
           sidebarOpen ? "translate-x-0" : "-translate-x-full md:w-0 md:-translate-x-0 md:overflow-hidden md:border-0",
         )}
         style={{
-          background: "linear-gradient(180deg, rgba(10,10,18,0.72) 0%, rgba(6,6,12,0.85) 100%)",
+          background: "linear-gradient(180deg, rgba(255,255,255,0.78) 0%, rgba(248,246,255,0.72) 100%)",
           backdropFilter: "blur(18px)",
         }}
       >
