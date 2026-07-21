@@ -641,12 +641,12 @@ function ChatWorkspaceInner() {
           </div>
 
           <div className="ml-auto flex shrink-0 items-center gap-1.5 text-[11px] text-slate-700 sm:gap-2">
-            <span className="hidden items-center gap-1 rounded-md border border-slate-200/70 bg-white/60 px-2 py-1 lg:flex">
-              <Shield className="h-3 w-3 text-emerald-500" />
+            <span className="hidden items-center gap-1 rounded-md border border-slate-200 bg-white/70 px-2 py-1 lg:flex">
+              <Shield className="h-3 w-3 text-[color:var(--color-iris-cyan)]" />
               <span>End-to-end encrypted</span>
             </span>
-            <span className="hidden items-center gap-1 rounded-md border border-slate-200/70 bg-white/60 px-2 py-1 font-mono md:flex">
-              <Zap className="h-3 w-3 text-[color:var(--color-iris-cyan)]" />
+            <span className="hidden items-center gap-1 rounded-md border border-slate-200 bg-white/70 px-2 py-1 font-mono md:flex">
+              <Zap className="h-3 w-3 text-[color:var(--color-iris-warm)]" />
               <span>{totalTokens.toLocaleString()} tok</span>
             </span>
             <Link
