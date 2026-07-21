@@ -114,7 +114,7 @@ export function ThemePicker() {
                     key={p.name}
                     onClick={() => update(p.theme)}
                     className={cn(
-                      "group relative overflow-hidden rounded-lg border border-slate-200 p-2 text-left transition hover:border-white/25",
+                      "group relative overflow-hidden rounded-lg border border-slate-200 p-2 text-left transition hover:border-slate-300",
                     )}
                     title={p.name}
                   >
