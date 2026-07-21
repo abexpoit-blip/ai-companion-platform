@@ -312,7 +312,7 @@ export function ChatWorkspace() {
         </header>
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto">
+        <div ref={scrollRef} className="flex-1 overflow-y-auto">
           {active && active.messages.length === 0 ? (
             <EmptyState onPick={(q) => setInput(q)} />
           ) : (
