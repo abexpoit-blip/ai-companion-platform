@@ -54,25 +54,19 @@ export default function SandpackStage({ payload, tab }: Props) {
     files: SandpackFiles;
   }>(() => {
     if (payload.lang === "react") {
-      return {
-        template: "react",
-        files: {
-          "/App.js": { code: payload.code },
-          "/index.js": { code: REACT_INDEX, hidden: true },
-          "/styles.css": { code: REACT_STYLES, hidden: true },
-        },
+      const f: SandpackFiles = {
+        "/App.js": { code: payload.code },
+        "/index.js": { code: REACT_INDEX, hidden: true },
+        "/styles.css": { code: REACT_STYLES, hidden: true },
       };
+      return { template: "react", files: f };
     }
     if (payload.lang === "html") {
-      return {
-        template: "static",
-        files: { "/index.html": { code: payload.code } },
-      };
+      const f: SandpackFiles = { "/index.html": { code: payload.code } };
+      return { template: "static", files: f };
     }
-    return {
-      template: "static",
-      files: { "/index.html": { code: VANILLA_HTML(payload.code) } },
-    };
+    const f: SandpackFiles = { "/index.html": { code: VANILLA_HTML(payload.code) } };
+    return { template: "static", files: f };
   }, [payload]);
 
   return (
