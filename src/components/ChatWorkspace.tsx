@@ -523,11 +523,13 @@ export function ChatWorkspace() {
           backdropFilter: "blur(10px)",
         }}>
           <div className="mx-auto max-w-3xl px-4 py-4 sm:px-6">
+            <div className="relative">
+              <div aria-hidden className="absolute -inset-[1.5px] rounded-[18px] opacity-40 blur-md transition group-focus-within:opacity-100" style={{ background: "linear-gradient(120deg, oklch(0.62 0.19 275), oklch(0.72 0.14 210), oklch(0.7 0.17 320))" }} />
             <div
-              className="group relative rounded-2xl border border-white/[0.08] p-2 transition focus-within:border-[color:var(--color-gold)]/40"
+              className="group relative rounded-2xl border border-white/[0.09] p-2 transition focus-within:border-[color:var(--color-iris)]/50"
               style={{
-                background: "linear-gradient(180deg, rgba(20,17,12,0.7), rgba(10,10,12,0.7))",
-                boxShadow: "0 20px 60px -20px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,220,150,0.05)",
+                background: "linear-gradient(180deg, rgba(14,14,22,0.85), rgba(8,8,14,0.85))",
+                boxShadow: "0 20px 60px -20px rgba(0,0,0,0.8), inset 0 1px 0 rgba(200,220,255,0.06)",
               }}
             >
               <textarea
