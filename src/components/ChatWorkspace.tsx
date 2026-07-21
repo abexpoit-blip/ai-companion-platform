@@ -52,7 +52,12 @@ export function ChatWorkspace() {
   const [hydrated, setHydrated] = useState(false);
   const [threads, setThreads] = useState<ChatThread[]>([]);
   const [activeId, setActiveId] = useState<string>("");
+  const isMobile = useIsMobile();
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  useEffect(() => {
+    setSidebarOpen(!isMobile);
+  }, [isMobile]);
+
   const [input, setInput] = useState("");
   const [isSending, setIsSending] = useState(false);
   const [renamingId, setRenamingId] = useState<string | null>(null);
