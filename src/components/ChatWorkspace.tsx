@@ -536,6 +536,17 @@ function ChatWorkspaceInner() {
               <Zap className="h-3 w-3 text-[color:var(--color-iris-cyan)]" />
               <span>{totalTokens.toLocaleString()} tok</span>
             </span>
+            <a
+              href="/image"
+              className="inline-flex items-center gap-1.5 rounded-md border border-white/10 bg-white/[0.03] px-2.5 py-1.5 text-[11px] font-medium text-white/80 transition hover:border-[color:var(--color-iris-cyan)]/40 hover:bg-[color:var(--color-iris-cyan)]/[0.08] hover:text-white"
+              title="Free unlimited AI image generation"
+            >
+              <span className="relative flex h-3.5 w-3.5 items-center justify-center">
+                <span className="absolute inset-0 rounded-full opacity-70 blur-[3px]" style={{ background: "linear-gradient(135deg, var(--color-iris-deep), var(--color-iris-cyan))" }} />
+                <span className="relative h-2 w-2 rounded-full" style={{ background: "linear-gradient(135deg, var(--color-iris-cyan), var(--color-iris-warm))" }} />
+              </span>
+              Image Studio
+            </a>
             <ThemePicker />
           </div>
 
