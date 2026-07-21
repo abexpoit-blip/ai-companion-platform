@@ -38,6 +38,7 @@ import {
 } from "@/lib/chat-api";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
+import nexusLogo from "@/assets/nexus-x-logo.png";
 import { ThemePicker } from "@/components/ThemePicker";
 import { Link } from "@tanstack/react-router";
 import { PreviewProvider, usePreview, isPreviewable } from "@/components/preview-context";
@@ -342,13 +343,20 @@ function ChatWorkspaceInner() {
       >
         {/* Brand */}
         <div className="flex items-center gap-3 px-5 pt-5 pb-4">
-          <div className="relative flex h-10 w-10 items-center justify-center rounded-xl p-[1.5px]" style={{
-            background: "var(--iris-gradient)",
-          }}>
-            <div className="flex h-full w-full items-center justify-center rounded-[10px] bg-[#050510]">
-              <span className="font-display text-lg font-bold leading-none gold-text">N</span>
-            </div>
-            <span className="absolute -bottom-1 -right-1 h-2.5 w-2.5 rounded-full bg-[color:var(--color-iris-cyan)] shadow-[0_0_12px_color-mix(in_oklab,var(--color-iris-cyan)_80%,transparent)]" />
+          <div className="relative flex h-11 w-11 items-center justify-center">
+            <div
+              aria-hidden
+              className="absolute inset-0 rounded-2xl blur-xl opacity-70"
+              style={{ background: "var(--iris-gradient)" }}
+            />
+            <img
+              src={nexusLogo}
+              alt="Nexus X AI logo"
+              width={44}
+              height={44}
+              className="relative h-11 w-11 object-contain drop-shadow-[0_4px_18px_color-mix(in_oklab,var(--color-iris)_60%,transparent)]"
+            />
+            <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-[color:var(--color-iris-cyan)] shadow-[0_0_12px_color-mix(in_oklab,var(--color-iris-cyan)_80%,transparent)]" />
           </div>
           <div className="min-w-0">
             <div className="font-display text-[17px] font-bold leading-tight tracking-tight text-white">
