@@ -1062,7 +1062,7 @@ function EmptyState({ onPick, model }: { onPick: (q: string) => void; model: AIM
 
   return (
     <div className="mx-auto flex h-full w-full max-w-5xl flex-col items-center justify-center px-4 py-10 sm:px-6">
-      <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white/70 px-3 py-1 text-[10px] uppercase tracking-[0.22em] text-[color:var(--color-iris-soft)] backdrop-blur">
+      <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white/80 px-3 py-1 text-[10px] uppercase tracking-[0.22em] text-[color:var(--color-iris-deep)] backdrop-blur">
         <span className="h-1.5 w-1.5 rounded-full bg-[color:var(--color-iris-cyan)] shadow-[0_0_8px_rgba(120,200,240,0.9)]" />
         <TierI className="h-3 w-3" />
         <span>{model.tier} · {model.name}</span>
