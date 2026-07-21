@@ -1,6 +1,8 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import ReactMarkdown from "react-markdown";
+import { useCallback, useEffect, useMemo, useRef, useState, type ComponentPropsWithoutRef } from "react";
+import ReactMarkdown, { type Components } from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import {
   Plus,
   MessageSquare,
@@ -15,6 +17,8 @@ import {
   Pencil,
   Check,
   X,
+  Copy,
+  Menu,
   User,
 } from "lucide-react";
 import {
@@ -22,7 +26,9 @@ import {
   type ChatMessage,
   type ChatThread,
 } from "@/lib/chat-api";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
+
 
 const uid = () => Math.random().toString(36).slice(2, 10);
 const STORAGE_KEY = "codeaxis.chat.v1";
