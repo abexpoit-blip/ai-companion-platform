@@ -438,9 +438,10 @@ export function ChatWorkspace() {
       <main className="relative flex h-full flex-1 flex-col">
         {/* Header */}
         <header className="relative z-10 flex items-center gap-3 border-b border-white/[0.06] px-4 py-3 sm:px-6" style={{
-          background: "linear-gradient(180deg, rgba(15,13,10,0.72) 0%, rgba(10,10,12,0.4) 100%)",
+          background: "linear-gradient(180deg, rgba(14,12,22,0.72) 0%, rgba(10,10,18,0.4) 100%)",
           backdropFilter: "blur(10px)",
         }}>
+
           <button
             onClick={() => setSidebarOpen((v) => !v)}
             className="rounded-md p-1.5 text-neutral-400 hover:bg-white/5 hover:text-white"
@@ -544,9 +545,10 @@ export function ChatWorkspace() {
 
         {/* Composer */}
         <div className="relative border-t border-white/[0.06]" style={{
-          background: "linear-gradient(0deg, rgba(10,10,12,0.85) 60%, rgba(10,10,12,0.4) 100%)",
+          background: "linear-gradient(0deg, rgba(10,10,18,0.9) 60%, rgba(10,10,18,0.4) 100%)",
           backdropFilter: "blur(10px)",
         }}>
+
           <div className="mx-auto max-w-3xl px-4 py-4 sm:px-6">
             <div className="group relative">
               <div
