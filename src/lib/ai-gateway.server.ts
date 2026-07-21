@@ -1,8 +1,8 @@
 // Multi-provider free-AI gateway for Nexus X AI.
-// Providers auto-enable based on which env keys are present at runtime.
+// Pollinations Text is the primary no-key route; other providers auto-enable from env keys.
 // All providers use OpenAI-compatible chat completions.
 
-export type ProviderId = "groq" | "gemini" | "openrouter" | "ollama" | "lovable";
+export type ProviderId = "pollinations" | "groq" | "gemini" | "openrouter" | "ollama" | "lovable";
 
 interface ProviderConfig {
   id: ProviderId;
@@ -13,6 +13,8 @@ interface ProviderConfig {
 
 function providerFromEnv(id: ProviderId): ProviderConfig | null {
   switch (id) {
+    case "pollinations":
+      return { id, baseURL: "https://text.pollinations.ai/openai" };
     case "groq": {
       const key = process.env.GROQ_API_KEY;
       if (!key) return null;
@@ -55,6 +57,8 @@ function providerFromEnv(id: ProviderId): ProviderConfig | null {
 
 // Friendly model ids used in the UI -> { provider, upstream model name }
 const MODEL_ROUTES: Record<string, { provider: ProviderId; upstream: string }> = {
+  // Pollinations Text — primary no-key route, anonymous OpenAI-compatible endpoint
+  "nx-pollinations":  { provider: "pollinations", upstream: "openai" },
   // Groq — blazing fast, generous free tier
   "nx-flash":         { provider: "groq",       upstream: "llama-3.3-70b-versatile" },
   "nx-lite":          { provider: "groq",       upstream: "llama-3.1-8b-instant" },
@@ -71,7 +75,7 @@ const MODEL_ROUTES: Record<string, { provider: ProviderId; upstream: string }> =
   "nx-lovable":       { provider: "lovable",    upstream: "google/gemini-3.5-flash" },
 };
 
-const PROVIDER_ORDER: ProviderId[] = ["groq", "gemini", "openrouter", "ollama", "lovable"];
+const PROVIDER_ORDER: ProviderId[] = ["pollinations", "groq", "gemini", "openrouter", "ollama", "lovable"];
 
 export function resolveRoute(
   friendlyId: string | undefined,
@@ -87,6 +91,7 @@ export function resolveRoute(
     const cfg = providerFromEnv(p);
     if (!cfg) continue;
     const defaults: Record<ProviderId, string> = {
+      pollinations: "nx-pollinations",
       groq: "nx-flash",
       gemini: "nx-gemini",
       openrouter: "nx-deepseek",
@@ -98,7 +103,7 @@ export function resolveRoute(
   }
   return {
     error:
-      "No AI provider configured. Add one of these secrets: GROQ_API_KEY, GEMINI_API_KEY, OPENROUTER_API_KEY, OLLAMA_BASE_URL, or LOVABLE_API_KEY.",
+      "No AI provider is available right now. Pollinations Text should work without a key; check outbound network access or add GROQ_API_KEY, GEMINI_API_KEY, OPENROUTER_API_KEY, OLLAMA_BASE_URL, or LOVABLE_API_KEY.",
   };
 }
 
@@ -107,13 +112,15 @@ export async function callChatCompletion(
   upstreamModel: string,
   messages: Array<{ role: "system" | "user" | "assistant"; content: string }>,
 ): Promise<{ content: string; tokens: number }> {
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+    ...(config.extraHeaders ?? {}),
+  };
+  if (config.apiKey) headers.Authorization = `Bearer ${config.apiKey}`;
+
   const res = await fetch(`${config.baseURL}/chat/completions`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${config.apiKey}`,
-      ...(config.extraHeaders ?? {}),
-    },
+    headers,
     body: JSON.stringify({
       model: upstreamModel,
       messages,

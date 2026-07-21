@@ -32,7 +32,7 @@ export const Route = createFileRoute("/api/chat")({
           return new Response("messages required", { status: 400 });
         }
 
-        const route = resolveRoute(body.modelId);
+        const route = resolveRoute(body.modelId || "nx-pollinations");
         if ("error" in route) {
           return Response.json({ error: route.error }, { status: 500 });
         }
@@ -42,6 +42,7 @@ export const Route = createFileRoute("/api/chat")({
           { role: "system" as const, content: SYSTEM_PROMPT },
           ...messages
             .filter((m) => m && typeof m.content === "string" && m.content.length > 0)
+            .slice(-16)
             .map((m) => ({
               role:
                 m.role === "assistant"
@@ -71,7 +72,7 @@ export const Route = createFileRoute("/api/chat")({
           const status =
             e.status === 429
               ? 429
-              : e.status === 401 || e.status === 403
+              : e.status === 401 || e.status === 402 || e.status === 403
               ? 402
               : 500;
           return Response.json(
