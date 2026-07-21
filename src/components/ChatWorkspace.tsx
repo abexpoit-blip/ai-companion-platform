@@ -362,7 +362,7 @@ function ChatWorkspaceInner() {
             <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-[color:var(--color-iris-cyan)] shadow-[0_0_12px_color-mix(in_oklab,var(--color-iris-cyan)_80%,transparent)]" />
           </div>
           <div className="min-w-0">
-            <div className="font-display text-[17px] font-bold leading-tight tracking-tight text-white">
+            <div className="font-display text-[17px] font-bold leading-tight tracking-tight text-slate-900">
               Nexus <span className="gold-text">X AI</span>
             </div>
             <div className="text-[10px] uppercase tracking-[0.18em] text-slate-500">Free Intelligence Network</div>
@@ -460,7 +460,7 @@ function ChatWorkspaceInner() {
                         if (e.key === "Enter") commitRename();
                         if (e.key === "Escape") cancelRename();
                       }}
-                      className="flex-1 rounded bg-white/70 px-1.5 py-0.5 text-[13px] text-white outline-none ring-1 ring-[color:var(--color-gold)]/40"
+                      className="flex-1 rounded bg-white/70 px-1.5 py-0.5 text-[13px] text-slate-900 outline-none ring-1 ring-[color:var(--color-gold)]/40"
                     />
                     <button onClick={commitRename} className="p-1 text-[color:var(--color-gold)]"><Check className="h-3.5 w-3.5" /></button>
                     <button onClick={cancelRename} className="p-1 text-slate-500"><X className="h-3.5 w-3.5" /></button>
@@ -587,7 +587,7 @@ function ChatWorkspaceInner() {
                 <span className="text-[12px] text-slate-500">
                   <span className="text-[color:var(--color-gold)]">{model.tier}</span> · Model
                 </span>
-                <span className="text-[13px] font-medium text-white">{model.name}</span>
+                <span className="text-[13px] font-medium text-slate-900">{model.name}</span>
               </span>
               <ChevronDown className={cn("h-3.5 w-3.5 text-slate-500 transition", modelOpen && "rotate-180")} />
             </button>
@@ -619,7 +619,7 @@ function ChatWorkspaceInner() {
                         </span>
                         <span className="min-w-0 flex-1">
                           <span className="flex items-center gap-1.5">
-                            <span className="text-[13px] font-medium text-white">{m.name}</span>
+                            <span className="text-[13px] font-medium text-slate-900">{m.name}</span>
                             {m.badge && (
                               <span className="rounded-sm bg-[color:var(--color-gold)]/15 px-1 py-px text-[9px] font-medium uppercase tracking-wider text-[color:var(--color-gold)]">{m.badge}</span>
                             )}
@@ -1066,7 +1066,7 @@ function EmptyState({ onPick, model }: { onPick: (q: string) => void; model: AIM
         <TierI className="h-3 w-3" />
         <span>{model.tier} · {model.name}</span>
       </div>
-      <h1 className="text-center font-display text-[44px] font-extrabold leading-[1.02] tracking-tight text-white sm:text-[60px]">
+      <h1 className="text-center font-display text-[44px] font-extrabold leading-[1.02] tracking-tight text-slate-900 sm:text-[60px]">
         What's next,{" "}
         <span className="gold-text italic">Creative?</span>
       </h1>
@@ -1107,7 +1107,7 @@ function EmptyState({ onPick, model }: { onPick: (q: string) => void; model: AIM
               </div>
 
               <div className={cn("relative", b.large ? "mt-auto pt-8" : "mt-4")}>
-                <h3 className={cn("font-display font-bold text-white", b.large ? "text-2xl sm:text-3xl" : "text-lg")}>
+                <h3 className={cn("font-display font-bold text-slate-900", b.large ? "text-2xl sm:text-3xl" : "text-lg")}>
                   {b.title}
                 </h3>
                 <p className={cn("mt-2 leading-relaxed text-slate-500", b.large ? "text-[13.5px] max-w-sm" : "text-[12px]")}>
