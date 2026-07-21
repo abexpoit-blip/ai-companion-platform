@@ -609,12 +609,55 @@ function ComposerBtn({ children, label }: { children: React.ReactNode; label: st
   return (
     <button
       aria-label={label}
-      className="rounded-lg p-2 text-neutral-400 transition hover:bg-white/5 hover:text-[color:var(--color-gold)]"
+      className="group relative rounded-lg p-2 text-neutral-400 transition hover:text-white"
     >
-      {children}
+      <span
+        aria-hidden
+        className="absolute inset-0 rounded-lg opacity-0 transition group-hover:opacity-100"
+        style={{
+          background: "radial-gradient(circle at center, color-mix(in oklab, var(--color-iris) 35%, transparent), transparent 70%)",
+        }}
+      />
+      <span className="relative">{children}</span>
     </button>
   );
 }
+
+function SendButton({ onClick, disabled, loading }: { onClick: () => void; disabled: boolean; loading: boolean }) {
+  const idle = !disabled;
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      aria-label="Send"
+      className={cn(
+        "group relative inline-flex h-10 w-10 items-center justify-center overflow-hidden rounded-2xl text-white transition-transform duration-200",
+        "hover:scale-[1.06] active:scale-95",
+        "disabled:cursor-not-allowed disabled:opacity-40 disabled:saturate-50",
+        idle && "iris-pulse-glow",
+      )}
+      style={{
+        background: "var(--iris-gradient)",
+        backgroundSize: "200% 100%",
+        boxShadow:
+          "0 10px 28px -8px color-mix(in oklab, var(--color-iris-deep) 70%, transparent), inset 0 1px 0 rgba(255,255,255,0.4)",
+      }}
+    >
+      {/* animated gradient sheen */}
+      <span
+        aria-hidden
+        className="pointer-events-none absolute inset-0 opacity-0 transition duration-500 group-hover:opacity-100"
+        style={{
+          background: "linear-gradient(120deg, transparent 20%, rgba(255,255,255,0.35) 50%, transparent 80%)",
+          transform: "translateX(-100%)",
+          animation: idle ? "iris-sheen 1.6s ease-in-out infinite" : undefined,
+        }}
+      />
+      <ArrowUp className={cn("relative h-4 w-4 transition", loading && "animate-pulse")} strokeWidth={2.75} />
+    </button>
+  );
+}
+
 
 const markdownComponents: Components = {
   code(props) {
