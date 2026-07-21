@@ -38,6 +38,8 @@ import {
 } from "@/lib/chat-api";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
+import { ThemePicker } from "@/components/ThemePicker";
+
 
 const uid = () => Math.random().toString(36).slice(2, 10);
 const STORAGE_KEY = "codeaxis.chat.v2";
@@ -226,10 +228,11 @@ export function ChatWorkspace() {
       background: "#020205",
     }}>
       {/* Iridescent ambient blobs */}
-      <div aria-hidden className="pointer-events-none absolute -top-[15%] left-[15%] h-[620px] w-[620px] rounded-full iris-drift" style={{ background: "radial-gradient(circle, oklch(0.62 0.19 275 / 0.35), transparent 70%)", filter: "blur(120px)" }} />
-      <div aria-hidden className="pointer-events-none absolute -bottom-[10%] right-[5%] h-[520px] w-[520px] rounded-full iris-drift" style={{ background: "radial-gradient(circle, oklch(0.72 0.14 210 / 0.28), transparent 70%)", filter: "blur(120px)", animationDelay: "-6s" }} />
-      <div aria-hidden className="pointer-events-none absolute top-[30%] right-[20%] h-[360px] w-[360px] rounded-full iris-drift" style={{ background: "radial-gradient(circle, oklch(0.7 0.17 320 / 0.22), transparent 70%)", filter: "blur(120px)", animationDelay: "-10s" }} />
+      <div aria-hidden className="pointer-events-none absolute -top-[15%] left-[15%] h-[620px] w-[620px] rounded-full iris-drift" style={{ background: "radial-gradient(circle, color-mix(in oklab, var(--color-iris-deep) 45%, transparent), transparent 70%)", filter: "blur(120px)" }} />
+      <div aria-hidden className="pointer-events-none absolute -bottom-[10%] right-[5%] h-[520px] w-[520px] rounded-full iris-drift" style={{ background: "radial-gradient(circle, color-mix(in oklab, var(--color-iris-cyan) 35%, transparent), transparent 70%)", filter: "blur(120px)", animationDelay: "-6s" }} />
+      <div aria-hidden className="pointer-events-none absolute top-[30%] right-[20%] h-[360px] w-[360px] rounded-full iris-drift" style={{ background: "radial-gradient(circle, color-mix(in oklab, var(--color-iris-warm) 30%, transparent), transparent 70%)", filter: "blur(120px)", animationDelay: "-10s" }} />
       <div className="pointer-events-none absolute inset-0 grain" aria-hidden />
+
 
       {/* Mobile backdrop */}
       {isMobile && sidebarOpen && (
@@ -255,12 +258,12 @@ export function ChatWorkspace() {
         {/* Brand */}
         <div className="flex items-center gap-3 px-5 pt-5 pb-4">
           <div className="relative flex h-10 w-10 items-center justify-center rounded-xl p-[1.5px]" style={{
-            background: "linear-gradient(135deg, oklch(0.78 0.13 285), oklch(0.84 0.11 210), oklch(0.7 0.17 320))",
+            background: "var(--iris-gradient)",
           }}>
             <div className="flex h-full w-full items-center justify-center rounded-[10px] bg-[#050510]">
               <span className="font-display text-lg font-bold leading-none gold-text">C</span>
             </div>
-            <span className="absolute -bottom-1 -right-1 h-2.5 w-2.5 rounded-full bg-[color:var(--color-iris-cyan)] shadow-[0_0_12px_rgba(120,200,240,0.9)]" />
+            <span className="absolute -bottom-1 -right-1 h-2.5 w-2.5 rounded-full bg-[color:var(--color-iris-cyan)] shadow-[0_0_12px_color-mix(in_oklab,var(--color-iris-cyan)_80%,transparent)]" />
           </div>
           <div className="min-w-0">
             <div className="font-display text-[17px] font-bold leading-tight tracking-tight text-white">
@@ -274,23 +277,27 @@ export function ChatWorkspace() {
         <div className="px-4 pb-3">
           <button
             onClick={newChat}
-            className="group relative flex w-full items-center justify-between overflow-hidden rounded-xl px-3.5 py-2.5 text-sm text-white transition"
+            className="group relative flex w-full items-center justify-between overflow-hidden rounded-xl px-3.5 py-2.5 text-sm text-white transition hover:-translate-y-px active:translate-y-0"
             style={{
-              background: "linear-gradient(135deg, oklch(0.62 0.19 275 / 0.35), oklch(0.72 0.14 210 / 0.25))",
-              boxShadow: "inset 0 1px 0 rgba(255,255,255,0.08), 0 8px 24px -12px oklch(0.62 0.19 275 / 0.6)",
-              border: "1px solid oklch(0.78 0.13 285 / 0.35)",
+              background: "linear-gradient(135deg, color-mix(in oklab, var(--color-iris-deep) 40%, transparent), color-mix(in oklab, var(--color-iris-cyan) 30%, transparent))",
+              boxShadow: "inset 0 1px 0 rgba(255,255,255,0.10), 0 10px 28px -14px color-mix(in oklab, var(--color-iris-deep) 80%, transparent)",
+              border: "1px solid color-mix(in oklab, var(--color-iris) 40%, transparent)",
             }}
           >
-            <span className="flex items-center gap-2">
-              <Plus className="h-4 w-4 text-[color:var(--color-iris-cyan)]" />
+            <span className="relative z-10 flex items-center gap-2">
+              <Plus className="h-4 w-4 text-[color:var(--color-iris-cyan)] transition group-hover:rotate-90" />
               <span className="font-semibold tracking-tight">New Workspace</span>
             </span>
-            <kbd className="rounded-md border border-white/10 bg-black/40 px-1.5 py-0.5 text-[10px] font-mono text-neutral-400">⌘N</kbd>
-            <span className="pointer-events-none absolute inset-0 opacity-0 transition group-hover:opacity-100" style={{
-              background: "linear-gradient(120deg, transparent 30%, rgba(200,220,255,0.12) 50%, transparent 70%)",
-            }} />
+            <kbd className="relative z-10 rounded-md border border-white/10 bg-black/40 px-1.5 py-0.5 text-[10px] font-mono text-neutral-300">⌘N</kbd>
+            {/* shimmer sweep on hover */}
+            <span
+              aria-hidden
+              className="pointer-events-none absolute inset-y-0 -left-1/2 w-1/2 -skew-x-12 opacity-0 transition duration-500 group-hover:left-[120%] group-hover:opacity-100"
+              style={{ background: "linear-gradient(90deg, transparent, color-mix(in oklab, white 45%, transparent), transparent)" }}
+            />
           </button>
         </div>
+
 
         {/* Search */}
         <div className="px-4 pb-3">
@@ -321,19 +328,32 @@ export function ChatWorkspace() {
               <div
                 key={t.id}
                 className={cn(
-                  "group relative mb-1 flex items-center gap-2 rounded-lg px-2.5 py-2 text-[13px] transition",
+                  "group relative mb-1 flex items-center gap-2 overflow-hidden rounded-lg px-2.5 py-2 text-[13px] transition",
                   isActive
-                    ? "border border-[color:var(--color-gold)]/25 text-white"
-                    : "border border-transparent text-neutral-300 hover:bg-white/[0.04]",
+                    ? "text-white"
+                    : "border border-transparent text-neutral-300 hover:bg-white/[0.04] hover:text-white",
                 )}
                 style={isActive ? {
-                  background: "linear-gradient(135deg, rgba(60,45,20,0.35), rgba(20,15,10,0.2))",
-                  boxShadow: "inset 0 1px 0 rgba(255,220,150,0.08)",
+                  background: "linear-gradient(135deg, color-mix(in oklab, var(--color-iris-deep) 28%, transparent), color-mix(in oklab, var(--color-iris-cyan) 14%, transparent))",
+                  border: "1px solid color-mix(in oklab, var(--color-iris) 35%, transparent)",
+                  boxShadow: "inset 0 1px 0 rgba(255,255,255,0.06), 0 6px 18px -10px color-mix(in oklab, var(--color-iris-deep) 70%, transparent)",
                 } : undefined}
               >
                 {isActive && (
-                  <span className="absolute left-0 top-1/2 h-5 w-[2px] -translate-y-1/2 rounded-r bg-[color:var(--color-gold)] shadow-[0_0_8px_rgba(220,180,90,0.7)]" />
+                  <>
+                    <span
+                      className="absolute left-0 top-1/2 h-6 w-[2px] -translate-y-1/2 rounded-r"
+                      style={{
+                        background: "var(--iris-gradient)",
+                        boxShadow: "0 0 10px color-mix(in oklab, var(--color-iris) 80%, transparent)",
+                      }}
+                    />
+                    <span aria-hidden className="pointer-events-none absolute inset-0 opacity-40" style={{
+                      background: "radial-gradient(120% 60% at 100% 0%, color-mix(in oklab, var(--color-iris) 25%, transparent), transparent 60%)",
+                    }} />
+                  </>
                 )}
+
                 {isRenaming ? (
                   <>
                     <input
