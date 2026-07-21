@@ -343,11 +343,14 @@ function ChatWorkspaceInner() {
       >
         {/* Brand */}
         <div className="flex items-center gap-3 px-5 pt-5 pb-4">
-          <div className="relative flex h-11 w-11 items-center justify-center">
+          <div className="relative flex h-11 w-11 items-center justify-center rgb-halo">
             <div
               aria-hidden
-              className="absolute inset-0 rounded-2xl blur-xl opacity-70"
-              style={{ background: "var(--iris-gradient)" }}
+              className="absolute inset-0 rounded-2xl blur-xl opacity-80"
+              style={{
+                background: "conic-gradient(from 0deg, #ff2d95, #ffd400, #2dff88, #00c8ff, #7a5cff, #ff2d95)",
+                animation: "rgb-hue 6s linear infinite",
+              }}
             />
             <img
               src={nexusLogo}
