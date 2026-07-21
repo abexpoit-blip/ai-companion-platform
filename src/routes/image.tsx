@@ -198,7 +198,7 @@ function ImageStudio() {
 
       {/* Header */}
       <header className="relative z-10 flex items-center justify-between border-b border-slate-200 px-4 py-3 sm:px-6"
-        style={{ background: "linear-gradient(180deg, rgba(10,10,20,0.85), rgba(10,10,20,0.5))", backdropFilter: "blur(16px)" }}>
+        style={{ background: "linear-gradient(180deg, rgba(255,255,255,0.75), rgba(255,255,255,0.35))", backdropFilter: "blur(16px)" }}>
         <div className="flex items-center gap-3">
           <Link
             to="/"
