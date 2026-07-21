@@ -25,10 +25,11 @@ export interface ChatThread {
 }
 
 const MOCK_REPLIES = [
-  "Sure — here's a quick take:\n\n- **Point one**: keep components small and focused.\n- **Point two**: colocate state where it's used.\n\n```ts\nfunction greet(name: string) {\n  return `Hello, ${name}!`;\n}\n```\n\nWant me to expand on any of these?",
-  "Great question. In short, you'll want to:\n\n1. Identify the source of truth\n2. Lift state only when needed\n3. Prefer derived values over duplicated state\n\nLet me know if you'd like a code example.",
-  "Here's a starter snippet:\n\n```tsx\nexport function Button({ children }: { children: React.ReactNode }) {\n  return <button className=\"px-4 py-2 rounded-md\">{children}</button>;\n}\n```\n\nHappy to iterate on this.",
+  "Sure — here's a quick take:\n\n- **Point one**: keep components small and focused.\n- **Point two**: colocate state where it's used.\n- **Point three**: derive values instead of duplicating them.\n\n```ts\nfunction greet(name: string) {\n  return `Hello, ${name}!`;\n}\n```\n\nWant me to expand on any of these?",
+  "Great question. Here's a short comparison:\n\n| Approach | Pros | Cons |\n| --- | --- | --- |\n| Local state | Simple, fast | Doesn't scale |\n| Context | Shared, ergonomic | Re-renders |\n| Store (Zustand/Redux) | Powerful | More setup |\n\nIn most apps, **start local, lift only when needed**.",
+  "Here's a starter snippet with syntax highlighting:\n\n```tsx\nimport { useState } from \"react\";\n\nexport function Counter() {\n  const [n, setN] = useState(0);\n  return (\n    <button onClick={() => setN(n + 1)}>\n      Clicked {n} times\n    </button>\n  );\n}\n```\n\nAnd a quick SQL example:\n\n```sql\nSELECT id, name\nFROM users\nWHERE created_at > NOW() - INTERVAL '7 days'\nORDER BY created_at DESC;\n```\n\nHappy to iterate on this.",
 ];
+
 
 export async function sendChatMessage(messages: ChatMessage[]): Promise<string> {
   // Simulate network + model latency
