@@ -763,15 +763,17 @@ function MessageBubble({ message }: { message: ChatMessage }) {
         className={cn(
           "flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border",
           isUser
-            ? "border-white/10 bg-white/[0.04]"
-            : "border-[color:var(--color-gold)]/30",
+            ? "border-white/10 bg-white/[0.05]"
+            : "border-transparent p-[1.5px]",
         )}
-        style={!isUser ? { background: "linear-gradient(135deg, oklch(0.28 0.05 80), oklch(0.12 0.02 60))" } : undefined}
+        style={!isUser ? { background: "var(--iris-gradient)" } : undefined}
       >
         {isUser ? (
-          <span className="text-xs font-medium text-neutral-300">A</span>
+          <span className="text-xs font-medium text-neutral-100">A</span>
         ) : (
-          <span className="font-display text-sm leading-none gold-text">C</span>
+          <div className="flex h-full w-full items-center justify-center rounded-[10px] bg-[#0a0a14]">
+            <span className="font-display text-sm leading-none gold-text">C</span>
+          </div>
         )}
       </div>
       <div className={cn("min-w-0 max-w-[92%] sm:max-w-[85%]", isUser ? "text-right" : "text-left")}>
@@ -780,7 +782,7 @@ function MessageBubble({ message }: { message: ChatMessage }) {
           {!isUser && message.model && (
             <>
               <span className="text-neutral-700">·</span>
-              <span className="text-[color:var(--color-gold)]/80 normal-case tracking-normal font-mono">
+              <span className="normal-case tracking-normal font-mono text-[color:var(--color-iris-cyan)]/90">
                 {AI_MODELS.find((m) => m.id === message.model)?.name ?? message.model}
               </span>
             </>
@@ -792,14 +794,19 @@ function MessageBubble({ message }: { message: ChatMessage }) {
           className={cn(
             "relative rounded-2xl px-4 py-3 text-[14px] leading-relaxed",
             isUser
-              ? "inline-block border border-white/10 bg-white/[0.04] text-neutral-100"
-              : "border border-white/[0.06] text-neutral-200",
+              ? "inline-block text-neutral-50"
+              : "border border-white/[0.07] text-neutral-100",
           )}
-          style={!isUser ? {
-            background: "linear-gradient(180deg, rgba(22,18,12,0.6), rgba(12,10,8,0.6))",
-            boxShadow: "inset 0 1px 0 rgba(255,220,150,0.04)",
-          } : undefined}
+          style={isUser ? {
+            background: "linear-gradient(135deg, color-mix(in oklab, var(--color-iris-deep) 55%, transparent), color-mix(in oklab, var(--color-iris) 35%, transparent))",
+            border: "1px solid color-mix(in oklab, var(--color-iris) 40%, transparent)",
+            boxShadow: "inset 0 1px 0 rgba(255,255,255,0.12), 0 8px 24px -12px color-mix(in oklab, var(--color-iris-deep) 60%, transparent)",
+          } : {
+            background: "linear-gradient(180deg, rgba(18,16,28,0.72), rgba(10,10,18,0.72))",
+            boxShadow: "inset 0 1px 0 rgba(200,220,255,0.06)",
+          }}
         >
+
           {isUser ? (
             <div className="whitespace-pre-wrap break-words text-left">{message.content}</div>
           ) : (
@@ -824,22 +831,25 @@ function MessageBubble({ message }: { message: ChatMessage }) {
 function TypingIndicator({ model }: { model: AIModel }) {
   return (
     <div className="flex gap-3 sm:gap-4">
-      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-[color:var(--color-gold)]/30" style={{
-        background: "linear-gradient(135deg, oklch(0.28 0.05 80), oklch(0.12 0.02 60))",
+      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl p-[1.5px]" style={{
+        background: "var(--iris-gradient)",
       }}>
-        <span className="font-display text-sm gold-text">C</span>
+        <div className="flex h-full w-full items-center justify-center rounded-[10px] bg-[#0a0a14]">
+          <span className="font-display text-sm gold-text">C</span>
+        </div>
       </div>
       <div className="min-w-0">
         <div className="mb-1.5 text-[10px] uppercase tracking-[0.18em] text-neutral-500">
-          Axis · <span className="normal-case tracking-normal font-mono text-[color:var(--color-gold)]/80">{model.name}</span>
+          Axis · <span className="normal-case tracking-normal font-mono text-[color:var(--color-iris-cyan)]/90">{model.name}</span>
         </div>
-        <div className="inline-flex items-center gap-2 rounded-2xl border border-white/[0.06] px-4 py-3" style={{
-          background: "linear-gradient(180deg, rgba(22,18,12,0.6), rgba(12,10,8,0.6))",
+        <div className="inline-flex items-center gap-2 rounded-2xl border border-white/[0.07] px-4 py-3" style={{
+          background: "linear-gradient(180deg, rgba(18,16,28,0.7), rgba(10,10,18,0.7))",
         }}>
           <div className="relative h-4 w-16 overflow-hidden rounded-full bg-white/[0.04]">
             <div className="absolute inset-0 shimmer-gold" />
           </div>
-          <span className="text-[11px] text-neutral-400">reasoning…</span>
+          <span className="text-[11px] text-neutral-300">reasoning…</span>
+
         </div>
       </div>
     </div>
