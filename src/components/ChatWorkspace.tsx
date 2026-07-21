@@ -404,14 +404,17 @@ export function ChatWorkspace() {
         {/* User */}
         <div className="border-t border-white/[0.06] p-3">
           <div className="flex items-center gap-3 rounded-xl border border-white/[0.05] bg-black/30 p-2.5">
-            <div className="relative flex h-10 w-10 items-center justify-center rounded-full border border-[color:var(--color-gold)]/30" style={{
-              background: "linear-gradient(135deg, oklch(0.32 0.06 80), oklch(0.16 0.03 60))",
+            <div className="relative flex h-10 w-10 items-center justify-center rounded-full p-[1.5px]" style={{
+              background: "var(--iris-gradient)",
             }}>
-              <span className="font-display text-base gold-text">A</span>
-              <span className="absolute -bottom-0.5 -right-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-black">
-                <Crown className="h-2 w-2 text-[color:var(--color-gold)]" />
+              <div className="flex h-full w-full items-center justify-center rounded-full bg-[#050510]">
+                <span className="font-display text-base gold-text">A</span>
+              </div>
+              <span className="absolute -bottom-0.5 -right-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-black ring-1 ring-white/10">
+                <Crown className="h-2 w-2 text-[color:var(--color-iris-cyan)]" />
               </span>
             </div>
+
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-1.5">
                 <div className="truncate text-[13px] font-medium">Alex Morgan</div>
