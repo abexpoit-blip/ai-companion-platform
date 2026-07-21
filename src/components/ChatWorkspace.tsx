@@ -1093,7 +1093,7 @@ function EmptyState({ onPick, model }: { onPick: (q: string) => void; model: AIM
               {/* accent glow */}
               <div
                 aria-hidden
-                className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full opacity-40 blur-3xl transition-all duration-700 group-hover:opacity-90 group-hover:scale-110"
+                className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full opacity-20 blur-3xl transition-all duration-700 group-hover:opacity-50 group-hover:scale-110"
                 style={{ background: `radial-gradient(circle, ${b.accent}, transparent 70%)` }}
               />
               {/* iridescent hairline on hover */}
