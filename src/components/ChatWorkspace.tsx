@@ -681,7 +681,7 @@ function ChatWorkspaceInner() {
 
         {/* Composer */}
         <div className="relative border-t border-slate-200/70" style={{
-          background: "linear-gradient(0deg, rgba(10,10,18,0.9) 60%, rgba(10,10,18,0.4) 100%)",
+          background: "linear-gradient(0deg, rgba(255,255,255,0.92) 60%, rgba(255,255,255,0.5) 100%)",
           backdropFilter: "blur(10px)",
         }}>
 
@@ -689,14 +689,14 @@ function ChatWorkspaceInner() {
             <div className="group relative">
               <div
                 aria-hidden
-                className="pointer-events-none absolute -inset-[3px] rounded-[20px] opacity-40 blur-lg transition duration-500 group-focus-within:opacity-100 group-hover:opacity-80"
+                className="pointer-events-none absolute -inset-[3px] rounded-[20px] opacity-30 blur-lg transition duration-500 group-focus-within:opacity-70 group-hover:opacity-60"
                 style={{ background: "var(--iris-gradient)" }}
               />
               <div
-                className="relative rounded-2xl border border-white/[0.09] p-2 transition focus-within:border-[color:var(--color-iris)]/60 iris-animated-border"
+                className="relative rounded-2xl border border-slate-200 p-2 transition focus-within:border-[color:var(--color-iris)]/60 iris-animated-border"
                 style={{
-                  background: "linear-gradient(180deg, rgba(14,14,22,0.88), rgba(8,8,14,0.88))",
-                  boxShadow: "0 20px 60px -20px rgba(0,0,0,0.8), inset 0 1px 0 rgba(200,220,255,0.06)",
+                  background: "linear-gradient(180deg, rgba(255,255,255,0.98), rgba(250,250,255,0.95))",
+                  boxShadow: "0 20px 60px -20px rgba(80,90,160,0.18), inset 0 1px 0 rgba(255,255,255,0.9)",
                 }}
               >
                 <textarea
