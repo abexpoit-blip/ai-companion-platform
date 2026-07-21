@@ -216,7 +216,7 @@ function ImageStudio() {
               <div className="text-[13px] font-semibold tracking-tight" style={{ fontFamily: "'Sora', sans-serif" }}>
                 Image Studio
               </div>
-              <div className="text-[10px] uppercase tracking-[0.18em] text-slate-400">
+              <div className="text-[10px] uppercase tracking-[0.18em] text-slate-500">
                 Pollinations · Flux · Free & Unlimited
               </div>
             </div>
@@ -249,7 +249,7 @@ function ImageStudio() {
               }}
               placeholder="Describe your image in vivid detail..."
               rows={5}
-              className="w-full resize-none rounded-lg border border-slate-200 bg-white/70 px-3 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-slate-300 focus:outline-none focus:ring-2 focus:ring-[color:var(--color-iris-cyan)]/30"
+              className="w-full resize-none rounded-lg border border-slate-200 bg-white/70 px-3 py-2.5 text-sm text-slate-900 placeholder:text-slate-500 focus:border-slate-300 focus:outline-none focus:ring-2 focus:ring-[color:var(--color-iris-cyan)]/30"
               style={{ fontFamily: "'Manrope', sans-serif" }}
             />
             <div className="mt-2 flex flex-wrap gap-1.5">
@@ -282,7 +282,7 @@ function ImageStudio() {
                     }`}
                   >
                     <div className="font-semibold">{m.label}</div>
-                    <div className="mt-0.5 text-[10px] text-slate-400">{m.hint}</div>
+                    <div className="mt-0.5 text-[10px] text-slate-500">{m.hint}</div>
                   </button>
                 ))}
               </div>
@@ -362,7 +362,7 @@ function ImageStudio() {
             </span>
           </button>
 
-          <p className="text-center text-[10px] text-slate-400">
+          <p className="text-center text-[10px] text-slate-500">
             Powered by <span className="text-slate-500">pollinations.ai</span> · Free & unlimited · No signup
           </p>
         </section>
@@ -491,7 +491,7 @@ function GalleryCard({
         <p className="line-clamp-2 text-xs text-slate-700" style={{ fontFamily: "'Manrope', sans-serif" }}>
           {item.prompt}
         </p>
-        <div className="mt-2 flex items-center justify-between text-[10px] text-slate-400">
+        <div className="mt-2 flex items-center justify-between text-[10px] text-slate-500">
           <div className="flex flex-wrap items-center gap-1.5">
             <span className="rounded border border-slate-200 bg-white/60 px-1.5 py-0.5 font-mono">{item.model}</span>
             <span className="rounded border border-slate-200 bg-white/60 px-1.5 py-0.5 font-mono">{item.ratio}</span>
