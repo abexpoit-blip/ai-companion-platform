@@ -426,7 +426,7 @@ function ChatWorkspaceInner() {
                 className={cn(
                   "group relative mb-1 flex items-center gap-2 overflow-hidden rounded-lg px-2.5 py-2 text-[13px] transition",
                   isActive
-                    ? "text-white"
+                    ? "text-slate-900"
                     : "border border-transparent text-slate-700 hover:bg-slate-900/5 hover:text-slate-900",
                 )}
                 style={isActive ? {
