@@ -39,6 +39,9 @@ import {
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 import { ThemePicker } from "@/components/ThemePicker";
+import { PreviewProvider, usePreview, isPreviewable } from "@/components/preview-context";
+import { PreviewPanel } from "@/components/PreviewPanel";
+import { PlayCircle } from "lucide-react";
 
 
 const uid = () => Math.random().toString(36).slice(2, 10);
@@ -63,6 +66,14 @@ const tierIcon = (tier: AIModel["tier"]) =>
   tier === "Signature" ? Crown : tier === "Reserve" ? Diamond : Sparkle;
 
 export function ChatWorkspace() {
+  return (
+    <PreviewProvider>
+      <ChatWorkspaceInner />
+    </PreviewProvider>
+  );
+}
+
+function ChatWorkspaceInner() {
   const [hydrated, setHydrated] = useState(false);
   const [threads, setThreads] = useState<ChatThread[]>([]);
   const [activeId, setActiveId] = useState<string>("");
@@ -604,6 +615,9 @@ export function ChatWorkspace() {
           </div>
         </div>
       </main>
+
+      {/* Live preview panel (Sandpack) */}
+      <PreviewPanel />
     </div>
   );
 }
@@ -708,6 +722,8 @@ const markdownComponents: Components = {
 
 function CodeBlock({ language, value }: { language: string; value: string }) {
   const [copied, setCopied] = useState(false);
+  const { openPreview } = usePreview();
+  const previewable = isPreviewable(language);
   const onCopy = async () => {
     try {
       await navigator.clipboard.writeText(value);
@@ -729,14 +745,27 @@ function CodeBlock({ language, value }: { language: string; value: string }) {
           </span>
           <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-neutral-500">{language}</span>
         </div>
-        <button
-          onClick={onCopy}
-          className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-[10.5px] text-neutral-400 hover:bg-white/5 hover:text-[color:var(--color-gold)]"
-          aria-label="Copy code"
-        >
-          {copied ? <Check className="h-3 w-3 text-[color:var(--color-gold)]" /> : <Copy className="h-3 w-3" />}
-          <span className="uppercase tracking-wider">{copied ? "Copied" : "Copy"}</span>
-        </button>
+        <div className="flex items-center gap-1">
+          {previewable && (
+            <button
+              onClick={() => openPreview(value, language)}
+              className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-[10.5px] text-[color:var(--color-iris-cyan)] hover:bg-[color:var(--color-iris)]/10"
+              aria-label="Open in live preview"
+              title="Open in live workspace"
+            >
+              <PlayCircle className="h-3 w-3" />
+              <span className="uppercase tracking-wider">Preview</span>
+            </button>
+          )}
+          <button
+            onClick={onCopy}
+            className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-[10.5px] text-neutral-400 hover:bg-white/5 hover:text-[color:var(--color-gold)]"
+            aria-label="Copy code"
+          >
+            {copied ? <Check className="h-3 w-3 text-[color:var(--color-gold)]" /> : <Copy className="h-3 w-3" />}
+            <span className="uppercase tracking-wider">{copied ? "Copied" : "Copy"}</span>
+          </button>
+        </div>
       </div>
       <SyntaxHighlighter
         language={language}
