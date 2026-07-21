@@ -569,6 +569,7 @@ export function ChatWorkspace() {
                 </div>
               </div>
             </div>
+            </div>
             <div className="mt-2.5 flex items-center justify-center gap-2 text-[10.5px] text-neutral-500">
               <span>Powered by <span className="text-[color:var(--color-gold)]">{model.name}</span></span>
               <span className="text-neutral-700">·</span>
