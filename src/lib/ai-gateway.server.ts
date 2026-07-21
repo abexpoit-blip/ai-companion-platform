@@ -108,6 +108,29 @@ export function resolveRoute(
   };
 }
 
+export function resolveFallbackRoute(
+  excludedProvider: ProviderId,
+): { config: ProviderConfig; upstream: string; friendlyId: string } | { error: string } {
+  const defaults: Record<ProviderId, string> = {
+    pollinations: "nx-pollinations",
+    groq: "nx-flash",
+    gemini: "nx-gemini",
+    openrouter: "nx-deepseek",
+    ollama: "nx-local",
+    lovable: "nx-lovable",
+  };
+
+  for (const provider of PROVIDER_ORDER) {
+    if (provider === excludedProvider) continue;
+    const config = providerFromEnv(provider);
+    if (!config) continue;
+    const friendlyId = defaults[provider];
+    return { config, upstream: MODEL_ROUTES[friendlyId].upstream, friendlyId };
+  }
+
+  return { error: "No fallback AI provider is configured right now." };
+}
+
 export async function callChatCompletion(
   config: ProviderConfig,
   upstreamModel: string,
@@ -119,15 +142,25 @@ export async function callChatCompletion(
   };
   if (config.apiKey) headers.Authorization = `Bearer ${config.apiKey}`;
 
+  const body =
+    config.id === "pollinations"
+      ? {
+          model: upstreamModel,
+          messages: messages
+            .filter((message) => message.role !== "system")
+            .map((message) => ({ role: message.role, content: message.content })),
+        }
+      : {
+          model: upstreamModel,
+          messages,
+          temperature: 0.7,
+          stream: false,
+        };
+
   const res = await fetch(`${config.baseURL}${config.chatPath ?? "/chat/completions"}`, {
     method: "POST",
     headers,
-    body: JSON.stringify({
-      model: upstreamModel,
-      messages,
-      temperature: 0.7,
-      stream: false,
-    }),
+    body: JSON.stringify(body),
   });
 
   if (!res.ok) {
