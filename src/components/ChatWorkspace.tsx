@@ -39,6 +39,9 @@ import {
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 import { ThemePicker } from "@/components/ThemePicker";
+import { PreviewProvider, usePreview, isPreviewable } from "@/components/preview-context";
+import { PreviewPanel } from "@/components/PreviewPanel";
+import { PlayCircle } from "lucide-react";
 
 
 const uid = () => Math.random().toString(36).slice(2, 10);
@@ -63,6 +66,14 @@ const tierIcon = (tier: AIModel["tier"]) =>
   tier === "Signature" ? Crown : tier === "Reserve" ? Diamond : Sparkle;
 
 export function ChatWorkspace() {
+  return (
+    <PreviewProvider>
+      <ChatWorkspaceInner />
+    </PreviewProvider>
+  );
+}
+
+function ChatWorkspaceInner() {
   const [hydrated, setHydrated] = useState(false);
   const [threads, setThreads] = useState<ChatThread[]>([]);
   const [activeId, setActiveId] = useState<string>("");
