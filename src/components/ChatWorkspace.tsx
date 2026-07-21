@@ -505,7 +505,7 @@ export function ChatWorkspace() {
 
         {/* Messages */}
         <div ref={scrollRef} className="relative flex-1 overflow-y-auto">
-          {active && active.messages.length === 0 ? (
+          {!active || active.messages.length === 0 ? (
             <EmptyState onPick={(q) => setInput(q)} model={model} />
           ) : (
             <div className="mx-auto flex max-w-3xl flex-col gap-8 px-4 py-10 sm:px-6">
