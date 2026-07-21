@@ -1108,7 +1108,7 @@ function EmptyState({ onPick, model }: { onPick: (q: string) => void; model: AIM
                 <span className="text-[9.5px] font-semibold uppercase tracking-[0.2em] text-slate-500">{b.eyebrow}</span>
               </div>
 
-              <div className={cn("relative flex-1", b.large ? "mt-5 flex flex-col justify-end" : "mt-4")}>
+              <div className={cn("relative", b.large ? "mt-6" : "mt-4")}>
                 <h3 className={cn("font-display font-bold text-slate-900", b.large ? "text-2xl sm:text-[28px]" : "text-lg")}>
                   {b.title}
                 </h3>
