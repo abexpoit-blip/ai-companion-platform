@@ -1,6 +1,13 @@
 import { createContext, useContext, useState, type ReactNode } from "react";
 
-export type PreviewLang = "react" | "html" | "vanilla" | "css" | "mdx";
+export type PreviewLang =
+  | "react"
+  | "react-ts"
+  | "html"
+  | "vanilla"
+  | "vanilla-ts"
+  | "css"
+  | "mdx";
 export type PreviewTab = "preview" | "code" | "console";
 
 export interface PreviewPayload {
@@ -30,25 +37,23 @@ export function isPreviewable(lang: string) {
   return PREVIEWABLE.has(lang.toLowerCase());
 }
 
-function detectLang(rawLang: string): PreviewLang {
-  const l = rawLang.toLowerCase();
-  if (l === "html" || l === "htm") return "html";
-  if (l === "jsx" || l === "tsx") return "react";
-  if (l === "css") return "css";
-  if (l === "mdx" || l === "md" || l === "markdown") return "mdx";
-  // ts/js — treat React-looking code as react, otherwise vanilla
-  return "vanilla";
-}
+const hasJsx = (code: string) =>
+  /<\/[A-Za-z][\w.-]*>|<[A-Z][\w.-]*[\s/>]|<[a-z]+[^<>]*\/>/.test(code) ||
+  /\bimport\s+React\b|from\s+["']react["']/.test(code);
 
 function smartDetect(code: string, rawLang: string): PreviewLang {
-  const base = detectLang(rawLang);
-  if (base !== "vanilla") return base;
-  // Heuristics: JSX / React hints -> react template
-  if (/\bimport\s+React\b|from\s+["']react["']|export\s+default\s+function|<\/[A-Za-z][\w.-]*>|<[A-Z][\w.-]*[\s/>]/.test(code)) {
-    return "react";
+  const l = rawLang.toLowerCase();
+  if (l === "html" || l === "htm") return "html";
+  if (l === "css") return "css";
+  if (l === "mdx" || l === "md" || l === "markdown") return "mdx";
+  if (l === "tsx") return "react-ts";
+  if (l === "jsx") return "react";
+  if (l === "ts" || l === "typescript") return hasJsx(code) ? "react-ts" : "vanilla-ts";
+  if (l === "js" || l === "javascript") {
+    if (hasJsx(code)) return "react";
+    if (/<!doctype html>|<html[\s>]|<body[\s>]/i.test(code)) return "html";
+    return "vanilla";
   }
-  // <html>/<body> -> html
-  if (/<!doctype html>|<html[\s>]|<body[\s>]/i.test(code)) return "html";
   return "vanilla";
 }
 
