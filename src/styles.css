@@ -7,15 +7,43 @@
   --font-display: "Sora", ui-sans-serif, system-ui, sans-serif;
   --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
-  /* Vapor Chrome — iridescent lavender / indigo / cyan */
-  --color-iris: oklch(0.78 0.13 285);
-  --color-iris-soft: oklch(0.86 0.09 250);
-  --color-iris-cyan: oklch(0.84 0.11 210);
-  --color-iris-deep: oklch(0.62 0.19 275);
-  /* Back-compat: existing usages of --color-gold* now render as iridescent chrome */
+}
+
+/* Vapor Chrome — iridescent tokens driven by hue variables so the theme picker
+   can retune the entire palette at runtime. */
+:root {
+  --iris-h: 285;      /* primary hue (lavender / indigo) */
+  --iris-h-cyan: 210; /* cool hue (cyan side) */
+  --iris-h-warm: 320; /* warm accent hue (magenta side) */
+  --iris-chroma: 0.13;
+
+  --color-iris:       oklch(0.78 var(--iris-chroma)              var(--iris-h));
+  --color-iris-soft:  oklch(0.86 calc(var(--iris-chroma) - 0.04) calc(var(--iris-h) - 35));
+  --color-iris-cyan:  oklch(0.84 calc(var(--iris-chroma) - 0.02) var(--iris-h-cyan));
+  --color-iris-deep:  oklch(0.62 calc(var(--iris-chroma) + 0.06) var(--iris-h));
+  --color-iris-warm:  oklch(0.72 calc(var(--iris-chroma) + 0.04) var(--iris-h-warm));
+
+  /* Contrast-safe foreground on iris surfaces */
+  --color-iris-fg: oklch(0.99 0 0);
+
+  /* Back-compat: existing --color-gold* usages render as iridescent chrome */
   --color-gold: var(--color-iris);
   --color-gold-soft: var(--color-iris-soft);
   --color-gold-deep: var(--color-iris-deep);
+
+  /* Reusable gradients */
+  --iris-gradient: linear-gradient(
+    120deg,
+    var(--color-iris-deep) 0%,
+    var(--color-iris) 45%,
+    var(--color-iris-cyan) 75%,
+    var(--color-iris-warm) 100%
+  );
+  --iris-gradient-soft: linear-gradient(
+    135deg,
+    color-mix(in oklab, var(--color-iris-deep) 45%, transparent),
+    color-mix(in oklab, var(--color-iris-cyan) 35%, transparent)
+  );
 }
 
 @utility grain {
@@ -32,10 +60,33 @@
 }
 
 @utility gold-text {
-  background: linear-gradient(120deg, oklch(0.92 0.08 285) 0%, oklch(0.82 0.13 260) 30%, oklch(0.86 0.11 210) 65%, oklch(0.9 0.09 300) 100%);
+  background: linear-gradient(
+    120deg,
+    color-mix(in oklab, var(--color-iris-soft) 90%, white) 0%,
+    var(--color-iris) 35%,
+    var(--color-iris-cyan) 65%,
+    var(--color-iris-warm) 100%
+  );
+  background-size: 200% 100%;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+}
+
+@utility iris-text {
+  background: var(--iris-gradient);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@utility iris-bg {
+  background: var(--iris-gradient);
+}
+
+@utility iris-border {
+  border: 1px solid color-mix(in oklab, var(--color-iris) 45%, transparent);
 }
 
 @utility gold-ring {
@@ -53,7 +104,13 @@
   100% { background-position: 200% 0; }
 }
 @utility shimmer-gold {
-  background: linear-gradient(90deg, transparent 0%, color-mix(in oklab, var(--color-iris) 55%, transparent) 35%, color-mix(in oklab, var(--color-iris-cyan) 55%, transparent) 65%, transparent 100%);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    color-mix(in oklab, var(--color-iris) 55%, transparent) 35%,
+    color-mix(in oklab, var(--color-iris-cyan) 55%, transparent) 65%,
+    transparent 100%
+  );
   background-size: 200% 100%;
   animation: shimmer-gold 2.4s linear infinite;
 }
@@ -65,6 +122,93 @@
 @utility iris-drift {
   animation: iris-drift 14s ease-in-out infinite;
 }
+
+@keyframes iris-sheen {
+  0%   { transform: translateX(-100%); }
+  60%  { transform: translateX(120%); }
+  100% { transform: translateX(120%); }
+}
+
+
+/* Premium micro-interactions */
+@keyframes iris-sweep {
+  0%   { transform: translateX(-120%) skewX(-18deg); }
+  100% { transform: translateX(220%)  skewX(-18deg); }
+}
+@utility iris-sweep {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 55%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      color-mix(in oklab, white 40%, transparent),
+      transparent
+    );
+    transform: translateX(-120%) skewX(-18deg);
+    animation: iris-sweep 1.4s ease-out;
+  }
+}
+
+@keyframes iris-pulse-glow {
+  0%, 100% {
+    box-shadow:
+      0 10px 28px -8px color-mix(in oklab, var(--color-iris-deep) 65%, transparent),
+      0 0 0 0 color-mix(in oklab, var(--color-iris) 60%, transparent);
+  }
+  50% {
+    box-shadow:
+      0 14px 36px -6px color-mix(in oklab, var(--color-iris-deep) 80%, transparent),
+      0 0 22px 4px color-mix(in oklab, var(--color-iris) 45%, transparent);
+  }
+}
+@utility iris-pulse-glow {
+  animation: iris-pulse-glow 2.6s ease-in-out infinite;
+}
+
+@keyframes iris-border-spin {
+  0%   { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+@utility iris-animated-border {
+  position: relative;
+  &::before {
+    content: "";
+    position: absolute;
+    inset: -1.5px;
+    border-radius: inherit;
+    padding: 1.5px;
+    background: linear-gradient(
+      120deg,
+      var(--color-iris-deep),
+      var(--color-iris),
+      var(--color-iris-cyan),
+      var(--color-iris-warm),
+      var(--color-iris-deep)
+    );
+    background-size: 200% 100%;
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+    opacity: 0.35;
+    transition: opacity 0.35s ease;
+    animation: iris-border-spin 6s linear infinite;
+    pointer-events: none;
+  }
+  &:hover::before,
+  &:focus-within::before { opacity: 1; }
+}
+
 
 
 @custom-variant dark (&:is(.dark *));
@@ -212,5 +356,29 @@
     background-color: var(--color-background);
     color: var(--color-foreground);
   }
+
+  /* Theme picker sliders */
+  .iris-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 16px;
+    width: 16px;
+    border-radius: 9999px;
+    background: white;
+    border: 2px solid var(--color-iris-deep);
+    box-shadow: 0 0 0 2px color-mix(in oklab, var(--color-iris) 40%, transparent),
+                0 4px 12px -2px color-mix(in oklab, var(--color-iris-deep) 60%, transparent);
+    cursor: pointer;
+  }
+  .iris-range::-moz-range-thumb {
+    height: 16px;
+    width: 16px;
+    border-radius: 9999px;
+    background: white;
+    border: 2px solid var(--color-iris-deep);
+    box-shadow: 0 0 0 2px color-mix(in oklab, var(--color-iris) 40%, transparent);
+    cursor: pointer;
+  }
 }
+
 
