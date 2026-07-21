@@ -272,15 +272,15 @@ function ChatWorkspaceInner() {
             background: "var(--iris-gradient)",
           }}>
             <div className="flex h-full w-full items-center justify-center rounded-[10px] bg-[#050510]">
-              <span className="font-display text-lg font-bold leading-none gold-text">C</span>
+              <span className="font-display text-lg font-bold leading-none gold-text">N</span>
             </div>
             <span className="absolute -bottom-1 -right-1 h-2.5 w-2.5 rounded-full bg-[color:var(--color-iris-cyan)] shadow-[0_0_12px_color-mix(in_oklab,var(--color-iris-cyan)_80%,transparent)]" />
           </div>
           <div className="min-w-0">
             <div className="font-display text-[17px] font-bold leading-tight tracking-tight text-white">
-              CodeAxis <span className="gold-text">Studio</span>
+              Nexus <span className="gold-text">X AI</span>
             </div>
-            <div className="text-[10px] uppercase tracking-[0.18em] text-neutral-500">Private Intelligence</div>
+            <div className="text-[10px] uppercase tracking-[0.18em] text-neutral-500">Free Intelligence Network</div>
           </div>
         </div>
 
@@ -610,7 +610,7 @@ function ChatWorkspaceInner() {
             <div className="mt-2.5 flex items-center justify-center gap-2 text-[10.5px] text-neutral-500">
               <span>Powered by <span className="text-[color:var(--color-gold)]">{model.name}</span></span>
               <span className="text-neutral-700">·</span>
-              <span>Verify critical outputs. CodeAxis is an assistant, not an oracle.</span>
+              <span>Verify critical outputs. Nexus X is an assistant, not an oracle.</span>
             </div>
           </div>
         </div>
@@ -947,7 +947,7 @@ function EmptyState({ onPick, model }: { onPick: (q: string) => void; model: AIM
         <span className="gold-text italic">Creative?</span>
       </h1>
       <p className="mt-4 max-w-xl text-center text-[14px] leading-relaxed text-neutral-400">
-        Architect your vision with CodeAxis Studio — the private intelligence workspace engineered for enterprise depth and taste.
+        Architect your vision with Nexus X AI — a free multi-model intelligence network wired to Groq, Gemini, DeepSeek and more.
       </p>
 
       <div className="mt-10 grid w-full grid-cols-1 grid-rows-none gap-3 sm:grid-cols-3 sm:grid-rows-2 sm:gap-4" style={{ minHeight: "clamp(280px, 40vh, 380px)" }}>

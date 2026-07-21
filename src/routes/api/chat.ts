@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { generateText } from "ai";
-import { createLovableAiGatewayProvider, resolveGatewayModel } from "@/lib/ai-gateway.server";
+import { callChatCompletion, resolveRoute } from "@/lib/ai-gateway.server";
 
 interface IncomingMessage {
   role: "user" | "assistant" | "system";
@@ -12,7 +11,7 @@ interface ChatBody {
   modelId?: string;
 }
 
-const SYSTEM_PROMPT = `You are CodeAxis Studio AI — a premium, precise coding and product intelligence assistant.
+const SYSTEM_PROMPT = `You are Nexus X AI — a premium, precise coding and product intelligence assistant.
 Respond in clean Markdown. Use fenced code blocks with language tags (tsx, ts, js, html, css, sql, bash, json)
 whenever you include code. Prefer tables for comparisons and bullet lists for enumerations. Be concise, senior,
 and opinionated. When appropriate, include one small runnable example.`;
@@ -33,50 +32,52 @@ export const Route = createFileRoute("/api/chat")({
           return new Response("messages required", { status: 400 });
         }
 
-        const key = process.env.LOVABLE_API_KEY;
-        if (!key) {
-          return Response.json(
-            { error: "LOVABLE_API_KEY is not configured on the server." },
-            { status: 500 },
-          );
+        const route = resolveRoute(body.modelId);
+        if ("error" in route) {
+          return Response.json({ error: route.error }, { status: 500 });
         }
 
-        const gateway = createLovableAiGatewayProvider(key);
-        const modelId = resolveGatewayModel(body.modelId);
-        const model = gateway(modelId);
-
         const started = Date.now();
+        const cleanMessages = [
+          { role: "system" as const, content: SYSTEM_PROMPT },
+          ...messages
+            .filter((m) => m && typeof m.content === "string" && m.content.length > 0)
+            .map((m) => ({
+              role:
+                m.role === "assistant"
+                  ? ("assistant" as const)
+                  : m.role === "system"
+                  ? ("system" as const)
+                  : ("user" as const),
+              content: m.content,
+            })),
+        ];
+
         try {
-          const result = await generateText({
-            model,
-            system: SYSTEM_PROMPT,
-            messages: messages
-              .filter((m) => m && typeof m.content === "string" && m.content.length > 0)
-              .map((m) => ({
-                role: m.role === "assistant" ? "assistant" : m.role === "system" ? "system" : "user",
-                content: m.content,
-              })),
-          });
-
-          const latencyMs = Date.now() - started;
-          const usage = result.usage ?? {};
-          const tokens =
-            (usage as { totalTokens?: number }).totalTokens ??
-            Math.round(result.text.length / 3.6);
-
+          const { content, tokens } = await callChatCompletion(
+            route.config,
+            route.upstream,
+            cleanMessages,
+          );
           return Response.json({
-            content: result.text,
-            model: modelId,
+            content,
+            model: route.friendlyId,
+            provider: route.config.id,
             tokens,
-            latencyMs,
+            latencyMs: Date.now() - started,
           });
         } catch (err) {
-          const message = err instanceof Error ? err.message : String(err);
-          const lower = message.toLowerCase();
-          let status = 500;
-          if (lower.includes("429") || lower.includes("rate")) status = 429;
-          else if (lower.includes("402") || lower.includes("credit")) status = 402;
-          return Response.json({ error: message, model: modelId }, { status });
+          const e = err as Error & { status?: number };
+          const status =
+            e.status === 429
+              ? 429
+              : e.status === 401 || e.status === 403
+              ? 402
+              : 500;
+          return Response.json(
+            { error: e.message, model: route.friendlyId, provider: route.config.id },
+            { status },
+          );
         }
       },
     },
