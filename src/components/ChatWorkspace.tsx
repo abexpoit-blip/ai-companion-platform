@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import {
@@ -12,6 +12,9 @@ import {
   PanelLeft,
   Sparkles,
   Trash2,
+  Pencil,
+  Check,
+  X,
   User,
 } from "lucide-react";
 import {
@@ -22,31 +25,79 @@ import {
 import { cn } from "@/lib/utils";
 
 const uid = () => Math.random().toString(36).slice(2, 10);
+const STORAGE_KEY = "codeaxis.chat.v1";
 
-const SEED_THREADS: ChatThread[] = [
-  { id: uid(), title: "React bug fix", messages: [], updatedAt: Date.now() - 3600_000 },
-  { id: uid(), title: "Marketing copy", messages: [], updatedAt: Date.now() - 7200_000 },
-  { id: uid(), title: "SQL query optimization", messages: [], updatedAt: Date.now() - 86400_000 },
-  { id: uid(), title: "Landing page ideas", messages: [], updatedAt: Date.now() - 172800_000 },
-  { id: uid(), title: "TypeScript generics help", messages: [], updatedAt: Date.now() - 259200_000 },
-];
+type Persisted = { threads: ChatThread[]; activeId: string };
+
+function loadPersisted(): Persisted | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = window.localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as Persisted;
+    if (!parsed || !Array.isArray(parsed.threads)) return null;
+    return parsed;
+  } catch {
+    return null;
+  }
+}
 
 export function ChatWorkspace() {
-  const [threads, setThreads] = useState<ChatThread[]>(() => {
-    const first: ChatThread = { id: uid(), title: "New chat", messages: [], updatedAt: Date.now() };
-    return [first, ...SEED_THREADS];
-  });
-  const [activeId, setActiveId] = useState<string>(() => threads[0]?.id ?? "");
+  const [hydrated, setHydrated] = useState(false);
+  const [threads, setThreads] = useState<ChatThread[]>([]);
+  const [activeId, setActiveId] = useState<string>("");
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [input, setInput] = useState("");
   const [isSending, setIsSending] = useState(false);
+  const [renamingId, setRenamingId] = useState<string | null>(null);
+  const [renameDraft, setRenameDraft] = useState("");
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Hydrate from localStorage on mount (client-only)
+  useEffect(() => {
+    const persisted = loadPersisted();
+    if (persisted && persisted.threads.length > 0) {
+      setThreads(persisted.threads);
+      setActiveId(
+        persisted.activeId && persisted.threads.some((t) => t.id === persisted.activeId)
+          ? persisted.activeId
+          : persisted.threads[0].id,
+      );
+    } else {
+      const first: ChatThread = { id: uid(), title: "New chat", messages: [], updatedAt: Date.now() };
+      setThreads([first]);
+      setActiveId(first.id);
+    }
+    setHydrated(true);
+  }, []);
+
+  // Persist on any change (after hydration)
+  useEffect(() => {
+    if (!hydrated) return;
+    try {
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify({ threads, activeId }));
+    } catch {
+      /* quota or private mode */
+    }
+  }, [threads, activeId, hydrated]);
 
   const active = useMemo(
     () => threads.find((t) => t.id === activeId) ?? threads[0],
     [threads, activeId],
   );
 
+  // Auto-scroll to bottom on new messages / typing
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (el) el.scrollTop = el.scrollHeight;
+  }, [active?.messages.length, isSending]);
+
   const newChat = () => {
+    // If current active is already an empty "New chat", just focus it.
+    if (active && active.messages.length === 0) {
+      setInput("");
+      return;
+    }
     const t: ChatThread = { id: uid(), title: "New chat", messages: [], updatedAt: Date.now() };
     setThreads((prev) => [t, ...prev]);
     setActiveId(t.id);
@@ -56,9 +107,32 @@ export function ChatWorkspace() {
   const deleteThread = (id: string) => {
     setThreads((prev) => {
       const next = prev.filter((t) => t.id !== id);
-      if (id === activeId && next[0]) setActiveId(next[0].id);
+      if (next.length === 0) {
+        const fresh: ChatThread = { id: uid(), title: "New chat", messages: [], updatedAt: Date.now() };
+        setActiveId(fresh.id);
+        return [fresh];
+      }
+      if (id === activeId) setActiveId(next[0].id);
       return next;
     });
+  };
+
+  const startRename = (t: ChatThread) => {
+    setRenamingId(t.id);
+    setRenameDraft(t.title);
+  };
+  const commitRename = () => {
+    const id = renamingId;
+    const title = renameDraft.trim();
+    if (id && title) {
+      setThreads((prev) => prev.map((t) => (t.id === id ? { ...t, title } : t)));
+    }
+    setRenamingId(null);
+    setRenameDraft("");
+  };
+  const cancelRename = () => {
+    setRenamingId(null);
+    setRenameDraft("");
   };
 
   const updateThread = useCallback((id: string, updater: (t: ChatThread) => ChatThread) => {
@@ -133,33 +207,69 @@ export function ChatWorkspace() {
           Recent
         </div>
         <div className="flex-1 overflow-y-auto px-2">
-          {threads.map((t) => (
-            <div
-              key={t.id}
-              className={cn(
-                "group mb-0.5 flex items-center gap-2 rounded-md px-2 py-2 text-sm transition",
-                t.id === activeId
-                  ? "bg-white/10 text-white"
-                  : "text-slate-300 hover:bg-white/5",
-              )}
-            >
-              <button
-                onClick={() => setActiveId(t.id)}
-                className="flex flex-1 items-center gap-2 truncate text-left"
+          {threads.map((t) => {
+            const isRenaming = renamingId === t.id;
+            return (
+              <div
+                key={t.id}
+                className={cn(
+                  "group mb-0.5 flex items-center gap-1 rounded-md px-2 py-2 text-sm transition",
+                  t.id === activeId
+                    ? "bg-white/10 text-white"
+                    : "text-slate-300 hover:bg-white/5",
+                )}
               >
                 <MessageSquare className="h-4 w-4 shrink-0 text-slate-400" />
-                <span className="truncate">{t.title}</span>
-              </button>
-              <button
-                onClick={() => deleteThread(t.id)}
-                className="opacity-0 transition group-hover:opacity-100"
-                aria-label="Delete chat"
-              >
-                <Trash2 className="h-3.5 w-3.5 text-slate-400 hover:text-red-400" />
-              </button>
-            </div>
-          ))}
+                {isRenaming ? (
+                  <>
+                    <input
+                      autoFocus
+                      value={renameDraft}
+                      onChange={(e) => setRenameDraft(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") commitRename();
+                        if (e.key === "Escape") cancelRename();
+                      }}
+                      className="flex-1 rounded bg-black/30 px-1.5 py-0.5 text-sm text-white outline-none ring-1 ring-indigo-500/50"
+                    />
+                    <button onClick={commitRename} aria-label="Save" className="p-1 text-emerald-400 hover:text-emerald-300">
+                      <Check className="h-3.5 w-3.5" />
+                    </button>
+                    <button onClick={cancelRename} aria-label="Cancel" className="p-1 text-slate-400 hover:text-white">
+                      <X className="h-3.5 w-3.5" />
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      onClick={() => setActiveId(t.id)}
+                      onDoubleClick={() => startRename(t)}
+                      className="flex-1 truncate text-left"
+                      title="Click to open · Double-click to rename"
+                    >
+                      {t.title}
+                    </button>
+                    <button
+                      onClick={() => startRename(t)}
+                      className="opacity-0 transition group-hover:opacity-100"
+                      aria-label="Rename chat"
+                    >
+                      <Pencil className="h-3.5 w-3.5 text-slate-400 hover:text-indigo-300" />
+                    </button>
+                    <button
+                      onClick={() => deleteThread(t.id)}
+                      className="opacity-0 transition group-hover:opacity-100"
+                      aria-label="Delete chat"
+                    >
+                      <Trash2 className="h-3.5 w-3.5 text-slate-400 hover:text-red-400" />
+                    </button>
+                  </>
+                )}
+              </div>
+            );
+          })}
         </div>
+
 
         {/* User */}
         <div className="mt-2 border-t border-white/5 p-3">
@@ -202,7 +312,7 @@ export function ChatWorkspace() {
         </header>
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto">
+        <div ref={scrollRef} className="flex-1 overflow-y-auto">
           {active && active.messages.length === 0 ? (
             <EmptyState onPick={(q) => setInput(q)} />
           ) : (
