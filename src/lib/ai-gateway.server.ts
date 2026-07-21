@@ -7,6 +7,7 @@ export type ProviderId = "pollinations" | "groq" | "gemini" | "openrouter" | "ol
 interface ProviderConfig {
   id: ProviderId;
   baseURL: string;
+  chatPath?: string;
   apiKey?: string;
   extraHeaders?: Record<string, string>;
 }
@@ -14,7 +15,7 @@ interface ProviderConfig {
 function providerFromEnv(id: ProviderId): ProviderConfig | null {
   switch (id) {
     case "pollinations":
-      return { id, baseURL: "https://text.pollinations.ai/openai" };
+      return { id, baseURL: "https://text.pollinations.ai", chatPath: "/openai" };
     case "groq": {
       const key = process.env.GROQ_API_KEY;
       if (!key) return null;
@@ -118,7 +119,7 @@ export async function callChatCompletion(
   };
   if (config.apiKey) headers.Authorization = `Bearer ${config.apiKey}`;
 
-  const res = await fetch(`${config.baseURL}/chat/completions`, {
+  const res = await fetch(`${config.baseURL}${config.chatPath ?? "/chat/completions"}`, {
     method: "POST",
     headers,
     body: JSON.stringify({
