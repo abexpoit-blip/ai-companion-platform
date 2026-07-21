@@ -102,15 +102,16 @@
 @utility gold-text {
   background: linear-gradient(
     120deg,
-    color-mix(in oklab, var(--color-iris-soft) 90%, white) 0%,
-    var(--color-iris) 35%,
-    var(--color-iris-cyan) 65%,
+    var(--color-iris-ink) 0%,
+    var(--color-iris-deep) 40%,
+    var(--color-iris-cyan) 75%,
     var(--color-iris-warm) 100%
   );
   background-size: 200% 100%;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+  font-weight: 600;
 }
 
 @utility iris-text {
