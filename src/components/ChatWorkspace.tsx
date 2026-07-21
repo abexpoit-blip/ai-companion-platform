@@ -331,7 +331,7 @@ export function ChatWorkspace() {
             className="rounded-md p-1.5 text-slate-400 hover:bg-white/10 hover:text-white"
             aria-label="Toggle sidebar"
           >
-            {sidebarOpen ? <PanelLeftClose className="h-4 w-4" /> : <PanelLeft className="h-4 w-4" />}
+            {isMobile ? <Menu className="h-4 w-4" /> : sidebarOpen ? <PanelLeftClose className="h-4 w-4" /> : <PanelLeft className="h-4 w-4" />}
           </button>
           <div className="truncate text-sm font-medium">{active?.title ?? "New chat"}</div>
           <div className="ml-auto text-xs text-slate-500">Mock model · Ollama-ready</div>
