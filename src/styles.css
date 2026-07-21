@@ -17,19 +17,22 @@
   --iris-h-warm: 320; /* warm accent hue (magenta side) */
   --iris-chroma: 0.13;
 
-  --color-iris:       oklch(0.78 var(--iris-chroma)              var(--iris-h));
+  --color-iris:       oklch(0.72 var(--iris-chroma)              var(--iris-h));
   --color-iris-soft:  oklch(0.86 calc(var(--iris-chroma) - 0.04) calc(var(--iris-h) - 35));
-  --color-iris-cyan:  oklch(0.84 calc(var(--iris-chroma) - 0.02) var(--iris-h-cyan));
-  --color-iris-deep:  oklch(0.62 calc(var(--iris-chroma) + 0.06) var(--iris-h));
-  --color-iris-warm:  oklch(0.72 calc(var(--iris-chroma) + 0.04) var(--iris-h-warm));
+  --color-iris-cyan:  oklch(0.72 calc(var(--iris-chroma) + 0.02) var(--iris-h-cyan));
+  --color-iris-deep:  oklch(0.55 calc(var(--iris-chroma) + 0.08) var(--iris-h));
+  --color-iris-warm:  oklch(0.66 calc(var(--iris-chroma) + 0.06) var(--iris-h-warm));
+
+  /* Ink-strength iris for readable text on light surfaces (AA contrast on white) */
+  --color-iris-ink:   oklch(0.46 calc(var(--iris-chroma) + 0.10) var(--iris-h));
 
   /* Contrast-safe foreground on iris surfaces */
   --color-iris-fg: oklch(0.99 0 0);
 
   /* Back-compat: existing --color-gold* usages render as iridescent chrome */
-  --color-gold: var(--color-iris);
+  --color-gold: var(--color-iris-deep);
   --color-gold-soft: var(--color-iris-soft);
-  --color-gold-deep: var(--color-iris-deep);
+  --color-gold-deep: var(--color-iris-ink);
 
   /* Reusable gradients */
   --iris-gradient: linear-gradient(
