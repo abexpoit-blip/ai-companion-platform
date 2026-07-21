@@ -594,8 +594,8 @@ function ChatWorkspaceInner() {
             {modelOpen && (
               <>
                 <div className="fixed inset-0 z-40" onClick={() => setModelOpen(false)} />
-                <div className="absolute left-0 top-[calc(100%+8px)] z-50 w-[360px] overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-2 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.9)]" style={{
-                  backgroundImage: "linear-gradient(180deg, color-mix(in oklab, var(--color-iris-deep) 22%, transparent), rgba(10,10,18,0.6))",
+                <div className="absolute left-0 top-[calc(100%+8px)] z-50 w-[360px] overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-2 shadow-[0_30px_80px_-20px_rgba(80,90,160,0.35)]" style={{
+                  backgroundImage: "linear-gradient(180deg, rgba(255,255,255,0.98), rgba(248,246,255,0.95))",
                 }}>
 
                   <div className="flex items-center justify-between px-2 py-1.5">
