@@ -310,13 +310,13 @@ function ChatWorkspaceInner() {
   const totalTokens = active?.messages.reduce((s, m) => s + (m.tokens ?? Math.round(m.content.length / 3.6)), 0) ?? 0;
 
   return (
-    <div className="dark relative flex h-screen w-full overflow-hidden text-slate-900" style={{
-      background: "#020205",
+    <div className="relative flex h-screen w-full overflow-hidden text-slate-900" style={{
+      background: "linear-gradient(135deg, #eef1ff 0%, #f6f0ff 30%, #eaf6f4 65%, #eef4ff 100%)",
     }}>
-      {/* Iridescent ambient blobs */}
-      <div aria-hidden className="pointer-events-none absolute -top-[15%] left-[15%] h-[620px] w-[620px] rounded-full iris-drift" style={{ background: "radial-gradient(circle, color-mix(in oklab, var(--color-iris-deep) 45%, transparent), transparent 70%)", filter: "blur(120px)" }} />
-      <div aria-hidden className="pointer-events-none absolute -bottom-[10%] right-[5%] h-[520px] w-[520px] rounded-full iris-drift" style={{ background: "radial-gradient(circle, color-mix(in oklab, var(--color-iris-cyan) 35%, transparent), transparent 70%)", filter: "blur(120px)", animationDelay: "-6s" }} />
-      <div aria-hidden className="pointer-events-none absolute top-[30%] right-[20%] h-[360px] w-[360px] rounded-full iris-drift" style={{ background: "radial-gradient(circle, color-mix(in oklab, var(--color-iris-warm) 30%, transparent), transparent 70%)", filter: "blur(120px)", animationDelay: "-10s" }} />
+      {/* Iridescent ambient blobs (softened for light theme) */}
+      <div aria-hidden className="pointer-events-none absolute -top-[15%] left-[15%] h-[620px] w-[620px] rounded-full iris-drift" style={{ background: "radial-gradient(circle, rgba(124,92,255,0.22), transparent 70%)", filter: "blur(120px)" }} />
+      <div aria-hidden className="pointer-events-none absolute -bottom-[10%] right-[5%] h-[520px] w-[520px] rounded-full iris-drift" style={{ background: "radial-gradient(circle, rgba(80,180,220,0.22), transparent 70%)", filter: "blur(120px)", animationDelay: "-6s" }} />
+      <div aria-hidden className="pointer-events-none absolute top-[30%] right-[20%] h-[360px] w-[360px] rounded-full iris-drift" style={{ background: "radial-gradient(circle, rgba(120,220,190,0.18), transparent 70%)", filter: "blur(120px)", animationDelay: "-10s" }} />
       <div className="pointer-events-none absolute inset-0 grain" aria-hidden />
 
 
