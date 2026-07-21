@@ -264,7 +264,11 @@ export function ChatWorkspace() {
                 ) : (
                   <>
                     <button
-                      onClick={() => setActiveId(t.id)}
+                      onClick={() => {
+                        setActiveId(t.id);
+                        if (isMobile) setSidebarOpen(false);
+                      }}
+
                       onDoubleClick={() => startRename(t)}
                       className="flex-1 truncate text-left"
                       title="Click to open · Double-click to rename"
