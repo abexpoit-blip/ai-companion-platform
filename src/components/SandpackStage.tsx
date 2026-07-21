@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactElement } from "react";
 import type { PreviewPayload } from "./preview-context";
 
 type Tab = "code" | "preview" | "console";
@@ -8,7 +8,7 @@ interface Props {
   tab: Tab;
 }
 
-type RuntimeComponent = (props: Props) => JSX.Element;
+type RuntimeComponent = (props: Props) => ReactElement;
 
 export default function SandpackStage(props: Props) {
   const [Runtime, setRuntime] = useState<RuntimeComponent | null>(null);
