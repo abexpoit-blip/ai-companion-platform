@@ -6,7 +6,32 @@
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
+const sandpackSsrStub = () => ({
+  name: "sandpack-ssr-stub",
+  enforce: "pre" as const,
+  resolveId(id: string, _importer: string | undefined, options: { ssr?: boolean } = {}) {
+    if (options.ssr && id === "@codesandbox/sandpack-react") {
+      return "\0sandpack-ssr-stub";
+    }
+    return null;
+  },
+  load(id: string) {
+    if (id !== "\0sandpack-ssr-stub") return null;
+    return `
+      import React from "react";
+      export const SandpackProvider = ({ children }) => React.createElement(React.Fragment, null, children);
+      export const SandpackCodeEditor = () => null;
+      export const SandpackPreview = () => null;
+      export const SandpackConsole = () => null;
+      export const useSandpack = () => ({ sandpack: { error: null, runSandpack: () => {} } });
+    `;
+  },
+});
+
 export default defineConfig({
+  vite: {
+    plugins: [sandpackSsrStub()],
+  },
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
     // nitro/vite builds from this
