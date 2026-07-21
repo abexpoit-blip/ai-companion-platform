@@ -4,12 +4,18 @@
 @plugin "@tailwindcss/typography";
 
 @theme {
-  --font-display: "Instrument Serif", ui-serif, Georgia, serif;
-  --font-sans: "Work Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Sora", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
-  --color-gold: oklch(0.82 0.14 84);
-  --color-gold-soft: oklch(0.9 0.08 88);
-  --color-gold-deep: oklch(0.68 0.14 70);
+  /* Vapor Chrome — iridescent lavender / indigo / cyan */
+  --color-iris: oklch(0.78 0.13 285);
+  --color-iris-soft: oklch(0.86 0.09 250);
+  --color-iris-cyan: oklch(0.84 0.11 210);
+  --color-iris-deep: oklch(0.62 0.19 275);
+  /* Back-compat: existing usages of --color-gold* now render as iridescent chrome */
+  --color-gold: var(--color-iris);
+  --color-gold-soft: var(--color-iris-soft);
+  --color-gold-deep: var(--color-iris-deep);
 }
 
 @utility grain {
@@ -19,14 +25,14 @@
     position: absolute;
     inset: 0;
     pointer-events: none;
-    opacity: 0.035;
+    opacity: 0.03;
     mix-blend-mode: overlay;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 0.85 0 0 0 0 0.4 0 0 0 0.9 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.78 0 0 0 0 0.72 0 0 0 0 1 0 0 0 0.9 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
   }
 }
 
 @utility gold-text {
-  background: linear-gradient(135deg, oklch(0.94 0.08 88), oklch(0.78 0.14 78) 40%, oklch(0.62 0.13 70) 100%);
+  background: linear-gradient(120deg, oklch(0.92 0.08 285) 0%, oklch(0.82 0.13 260) 30%, oklch(0.86 0.11 210) 65%, oklch(0.9 0.09 300) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -34,8 +40,8 @@
 
 @utility gold-ring {
   box-shadow:
-    0 0 0 1px color-mix(in oklab, var(--color-gold) 40%, transparent),
-    0 0 24px -6px color-mix(in oklab, var(--color-gold) 55%, transparent);
+    0 0 0 1px color-mix(in oklab, var(--color-iris) 40%, transparent),
+    0 0 28px -6px color-mix(in oklab, var(--color-iris-deep) 55%, transparent);
 }
 
 @utility hairline {
@@ -47,9 +53,17 @@
   100% { background-position: 200% 0; }
 }
 @utility shimmer-gold {
-  background: linear-gradient(90deg, transparent 0%, color-mix(in oklab, var(--color-gold) 55%, transparent) 50%, transparent 100%);
+  background: linear-gradient(90deg, transparent 0%, color-mix(in oklab, var(--color-iris) 55%, transparent) 35%, color-mix(in oklab, var(--color-iris-cyan) 55%, transparent) 65%, transparent 100%);
   background-size: 200% 100%;
   animation: shimmer-gold 2.4s linear infinite;
+}
+
+@keyframes iris-drift {
+  0%, 100% { transform: translate3d(0,0,0) scale(1); opacity: 0.55; }
+  50% { transform: translate3d(3%, -4%, 0) scale(1.08); opacity: 0.78; }
+}
+@utility iris-drift {
+  animation: iris-drift 14s ease-in-out infinite;
 }
 
 
