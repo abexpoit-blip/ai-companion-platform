@@ -17,27 +17,23 @@ interface Props {
   tab: Tab;
 }
 
-// Resolve either a default export or the first exported function/component
-// so AI-generated snippets with `export function Foo()` still render.
-const REACT_INDEX = `import React from "react";
-import { createRoot } from "react-dom/client";
-import * as Mod from "./App";
-import "./styles.css";
-
-function Fallback() {
-  return React.createElement(
-    "pre",
-    { style: { color: "#ff9aa2", fontFamily: "ui-monospace, monospace", padding: 16 } },
-    "No React component exported from the snippet.\\nAdd 'export default' or 'export function ComponentName()'."
-  );
+// Ensure the AI snippet has a default export so `import App from './App'`
+// resolves to a component even when authors used `export function Name()`.
+function ensureDefaultExport(src: string): string {
+  if (/\bexport\s+default\b/.test(src)) return src;
+  const m = src.match(/export\s+(?:function|const|class)\s+([A-Z][A-Za-z0-9_]*)/);
+  if (m) return `${src}\n\nexport default ${m[1]};\n`;
+  const anyDecl = src.match(/(?:function|const|class)\s+([A-Z][A-Za-z0-9_]*)/);
+  if (anyDecl) return `${src}\n\nexport default ${anyDecl[1]};\n`;
+  return `${src}\n\nexport default function App(){ return null; }\n`;
 }
 
-const picked =
-  Mod.default ||
-  Object.values(Mod).find((v) => typeof v === "function") ||
-  Fallback;
+const REACT_INDEX = `import React from "react";
+import { createRoot } from "react-dom/client";
+import App from "./App";
+import "./styles.css";
 
-createRoot(document.getElementById("root")).render(React.createElement(picked));
+createRoot(document.getElementById("root")).render(React.createElement(App));
 `;
 
 const REACT_STYLES = `:root { color-scheme: dark; }
