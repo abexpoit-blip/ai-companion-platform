@@ -1127,12 +1127,12 @@ function EmptyState({ onPick, model }: { onPick: (q: string) => void; model: AIM
         })}
       </div>
 
-      <div className="mt-8 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-[10.5px] text-slate-500">
-        <span className="flex items-center gap-1.5"><Shield className="h-3 w-3 text-emerald-400" />E2E encrypted</span>
-        <span className="text-slate-200">·</span>
-        <span className="flex items-center gap-1.5"><Crown className="h-3 w-3 text-[color:var(--color-iris)]" />SOC 2 · ISO 27001</span>
-        <span className="text-slate-200">·</span>
-        <span className="flex items-center gap-1.5"><Zap className="h-3 w-3 text-[color:var(--color-iris-cyan)]" />Sub-second routing</span>
+      <div className="mt-8 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-[10.5px] text-slate-600">
+        <span className="flex items-center gap-1.5"><Shield className="h-3 w-3 text-[color:var(--color-iris-cyan)]" />E2E encrypted</span>
+        <span className="text-slate-300">·</span>
+        <span className="flex items-center gap-1.5"><Crown className="h-3 w-3 text-[color:var(--color-iris-deep)]" />SOC 2 · ISO 27001</span>
+        <span className="text-slate-300">·</span>
+        <span className="flex items-center gap-1.5"><Zap className="h-3 w-3 text-[color:var(--color-iris-warm)]" />Sub-second routing</span>
       </div>
     </div>
   );
