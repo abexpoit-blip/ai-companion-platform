@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import {
@@ -12,6 +12,9 @@ import {
   PanelLeft,
   Sparkles,
   Trash2,
+  Pencil,
+  Check,
+  X,
   User,
 } from "lucide-react";
 import {
@@ -22,31 +25,79 @@ import {
 import { cn } from "@/lib/utils";
 
 const uid = () => Math.random().toString(36).slice(2, 10);
+const STORAGE_KEY = "codeaxis.chat.v1";
 
-const SEED_THREADS: ChatThread[] = [
-  { id: uid(), title: "React bug fix", messages: [], updatedAt: Date.now() - 3600_000 },
-  { id: uid(), title: "Marketing copy", messages: [], updatedAt: Date.now() - 7200_000 },
-  { id: uid(), title: "SQL query optimization", messages: [], updatedAt: Date.now() - 86400_000 },
-  { id: uid(), title: "Landing page ideas", messages: [], updatedAt: Date.now() - 172800_000 },
-  { id: uid(), title: "TypeScript generics help", messages: [], updatedAt: Date.now() - 259200_000 },
-];
+type Persisted = { threads: ChatThread[]; activeId: string };
+
+function loadPersisted(): Persisted | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = window.localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as Persisted;
+    if (!parsed || !Array.isArray(parsed.threads)) return null;
+    return parsed;
+  } catch {
+    return null;
+  }
+}
 
 export function ChatWorkspace() {
-  const [threads, setThreads] = useState<ChatThread[]>(() => {
-    const first: ChatThread = { id: uid(), title: "New chat", messages: [], updatedAt: Date.now() };
-    return [first, ...SEED_THREADS];
-  });
-  const [activeId, setActiveId] = useState<string>(() => threads[0]?.id ?? "");
+  const [hydrated, setHydrated] = useState(false);
+  const [threads, setThreads] = useState<ChatThread[]>([]);
+  const [activeId, setActiveId] = useState<string>("");
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [input, setInput] = useState("");
   const [isSending, setIsSending] = useState(false);
+  const [renamingId, setRenamingId] = useState<string | null>(null);
+  const [renameDraft, setRenameDraft] = useState("");
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Hydrate from localStorage on mount (client-only)
+  useEffect(() => {
+    const persisted = loadPersisted();
+    if (persisted && persisted.threads.length > 0) {
+      setThreads(persisted.threads);
+      setActiveId(
+        persisted.activeId && persisted.threads.some((t) => t.id === persisted.activeId)
+          ? persisted.activeId
+          : persisted.threads[0].id,
+      );
+    } else {
+      const first: ChatThread = { id: uid(), title: "New chat", messages: [], updatedAt: Date.now() };
+      setThreads([first]);
+      setActiveId(first.id);
+    }
+    setHydrated(true);
+  }, []);
+
+  // Persist on any change (after hydration)
+  useEffect(() => {
+    if (!hydrated) return;
+    try {
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify({ threads, activeId }));
+    } catch {
+      /* quota or private mode */
+    }
+  }, [threads, activeId, hydrated]);
 
   const active = useMemo(
     () => threads.find((t) => t.id === activeId) ?? threads[0],
     [threads, activeId],
   );
 
+  // Auto-scroll to bottom on new messages / typing
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (el) el.scrollTop = el.scrollHeight;
+  }, [active?.messages.length, isSending]);
+
   const newChat = () => {
+    // If current active is already an empty "New chat", just focus it.
+    if (active && active.messages.length === 0) {
+      setInput("");
+      return;
+    }
     const t: ChatThread = { id: uid(), title: "New chat", messages: [], updatedAt: Date.now() };
     setThreads((prev) => [t, ...prev]);
     setActiveId(t.id);
@@ -56,9 +107,32 @@ export function ChatWorkspace() {
   const deleteThread = (id: string) => {
     setThreads((prev) => {
       const next = prev.filter((t) => t.id !== id);
-      if (id === activeId && next[0]) setActiveId(next[0].id);
+      if (next.length === 0) {
+        const fresh: ChatThread = { id: uid(), title: "New chat", messages: [], updatedAt: Date.now() };
+        setActiveId(fresh.id);
+        return [fresh];
+      }
+      if (id === activeId) setActiveId(next[0].id);
       return next;
     });
+  };
+
+  const startRename = (t: ChatThread) => {
+    setRenamingId(t.id);
+    setRenameDraft(t.title);
+  };
+  const commitRename = () => {
+    const id = renamingId;
+    const title = renameDraft.trim();
+    if (id && title) {
+      setThreads((prev) => prev.map((t) => (t.id === id ? { ...t, title } : t)));
+    }
+    setRenamingId(null);
+    setRenameDraft("");
+  };
+  const cancelRename = () => {
+    setRenamingId(null);
+    setRenameDraft("");
   };
 
   const updateThread = useCallback((id: string, updater: (t: ChatThread) => ChatThread) => {
