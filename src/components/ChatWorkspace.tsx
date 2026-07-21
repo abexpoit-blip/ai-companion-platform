@@ -332,7 +332,7 @@ function ChatWorkspaceInner() {
       {/* Sidebar */}
       <aside
         className={cn(
-          "flex h-full w-[300px] shrink-0 flex-col border-r border-slate-200/70 transition-transform duration-300",
+          "flex h-full w-[300px] shrink-0 flex-col border-r border-slate-200 transition-transform duration-300",
           "fixed inset-y-0 left-0 z-40 md:relative md:translate-x-0",
           sidebarOpen ? "translate-x-0" : "-translate-x-full md:w-0 md:-translate-x-0 md:overflow-hidden md:border-0",
         )}
@@ -397,7 +397,7 @@ function ChatWorkspaceInner() {
 
         {/* Search */}
         <div className="px-4 pb-3">
-          <div className="flex items-center gap-2 rounded-lg border border-slate-200/70 bg-white/60 px-2.5 py-1.5">
+          <div className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white/60 px-2.5 py-1.5">
             <Search className="h-3.5 w-3.5 text-slate-500" />
             <input
               value={query}
@@ -413,7 +413,7 @@ function ChatWorkspaceInner() {
 
         <div className="flex items-center justify-between px-5 pt-3 pb-2">
           <span className="text-[10px] font-medium uppercase tracking-[0.2em] text-slate-500">Archive</span>
-          <span className="text-[10px] text-slate-400">{filtered.length}</span>
+          <span className="text-[10px] text-slate-500">{filtered.length}</span>
         </div>
 
         <div className="flex-1 overflow-y-auto px-2 pb-2">
@@ -498,8 +498,8 @@ function ChatWorkspaceInner() {
         </div>
 
         {/* User */}
-        <div className="border-t border-slate-200/70 p-3">
-          <div className="flex items-center gap-3 rounded-xl border border-slate-200/70 bg-white/60 p-2.5">
+        <div className="border-t border-slate-200 p-3">
+          <div className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white/60 p-2.5">
             <div className="relative flex h-10 w-10 items-center justify-center rounded-full p-[1.5px]" style={{
               background: "var(--iris-gradient)",
             }}>
@@ -530,7 +530,7 @@ function ChatWorkspaceInner() {
         </div>
 
         {/* Developer credit */}
-        <div className="border-t border-slate-200/70 px-4 py-3">
+        <div className="border-t border-slate-200 px-4 py-3">
           <div
             className="relative overflow-hidden rounded-xl px-3 py-2.5 text-center"
             style={{
@@ -561,7 +561,7 @@ function ChatWorkspaceInner() {
       {/* Main */}
       <main className="relative flex h-full flex-1 flex-col">
         {/* Header */}
-        <header className="relative z-10 flex items-center gap-2 border-b border-slate-200/70 px-3 py-3 sm:gap-3 sm:px-6" style={{
+        <header className="relative z-10 flex items-center gap-2 border-b border-slate-200 px-3 py-3 sm:gap-3 sm:px-6" style={{
           background: "linear-gradient(180deg, rgba(255,255,255,0.75) 0%, rgba(255,255,255,0.35) 100%)",
           backdropFilter: "blur(10px)",
         }}>
@@ -600,7 +600,7 @@ function ChatWorkspaceInner() {
 
                   <div className="flex items-center justify-between px-2 py-1.5">
                     <span className="text-[10px] uppercase tracking-[0.2em] text-slate-500">Select Intelligence</span>
-                    <span className="text-[10px] text-slate-400">4 available</span>
+                    <span className="text-[10px] text-slate-500">4 available</span>
                   </div>
                   {AI_MODELS.map((m) => {
                     const I = tierIcon(m.tier);
@@ -641,12 +641,12 @@ function ChatWorkspaceInner() {
           </div>
 
           <div className="ml-auto flex shrink-0 items-center gap-1.5 text-[11px] text-slate-700 sm:gap-2">
-            <span className="hidden items-center gap-1 rounded-md border border-slate-200/70 bg-white/60 px-2 py-1 lg:flex">
-              <Shield className="h-3 w-3 text-emerald-500" />
+            <span className="hidden items-center gap-1 rounded-md border border-slate-200 bg-white/70 px-2 py-1 lg:flex">
+              <Shield className="h-3 w-3 text-[color:var(--color-iris-cyan)]" />
               <span>End-to-end encrypted</span>
             </span>
-            <span className="hidden items-center gap-1 rounded-md border border-slate-200/70 bg-white/60 px-2 py-1 font-mono md:flex">
-              <Zap className="h-3 w-3 text-[color:var(--color-iris-cyan)]" />
+            <span className="hidden items-center gap-1 rounded-md border border-slate-200 bg-white/70 px-2 py-1 font-mono md:flex">
+              <Zap className="h-3 w-3 text-[color:var(--color-iris-warm)]" />
               <span>{totalTokens.toLocaleString()} tok</span>
             </span>
             <Link
@@ -681,7 +681,7 @@ function ChatWorkspaceInner() {
         </div>
 
         {/* Composer */}
-        <div className="relative border-t border-slate-200/70" style={{
+        <div className="relative border-t border-slate-200" style={{
           background: "linear-gradient(0deg, rgba(255,255,255,0.92) 60%, rgba(255,255,255,0.5) 100%)",
           backdropFilter: "blur(10px)",
         }}>
@@ -834,7 +834,7 @@ const markdownComponents: Components = {
     return <th className="border-b border-slate-200/80 bg-[color:var(--color-gold)]/[0.06] px-3 py-2 text-left font-medium uppercase tracking-wider text-[11px] text-[color:var(--color-gold-soft)]">{children}</th>;
   },
   td({ children }) {
-    return <td className="border-b border-slate-200/70 px-3 py-2 align-top">{children}</td>;
+    return <td className="border-b border-slate-200 px-3 py-2 align-top">{children}</td>;
   },
   a({ children, href }) {
     return (
@@ -861,7 +861,7 @@ function CodeBlock({ language, value }: { language: string; value: string }) {
       background: "linear-gradient(180deg, #ffffff 0%, #f7f7fb 100%)",
       boxShadow: "0 10px 30px -18px rgba(80,90,160,0.18), inset 0 1px 0 rgba(255,255,255,0.9)",
     }}>
-      <div className="flex items-center justify-between border-b border-slate-200/70 bg-white/80 px-3 py-1.5">
+      <div className="flex items-center justify-between border-b border-slate-200 bg-white/80 px-3 py-1.5">
         <div className="flex items-center gap-2">
           <span className="flex gap-1">
             <span className="h-2 w-2 rounded-full bg-[color:var(--color-iris-warm)]/50" />
@@ -952,7 +952,7 @@ function MessageBubble({ message }: { message: ChatMessage }) {
             "relative rounded-2xl px-4 py-3 text-[14px] leading-relaxed",
             isUser
               ? "inline-block text-slate-900"
-              : "border border-slate-200/70 text-slate-900",
+              : "border border-slate-200 text-slate-900",
           )}
           style={isUser ? {
             background: "linear-gradient(135deg, color-mix(in oklab, var(--color-iris-deep) 55%, transparent), color-mix(in oklab, var(--color-iris) 35%, transparent))",
@@ -975,7 +975,7 @@ function MessageBubble({ message }: { message: ChatMessage }) {
           )}
         </div>
         {!isUser && (message.tokens || message.latencyMs) && (
-          <div className="mt-1.5 flex items-center gap-2 text-[10px] font-mono text-slate-400">
+          <div className="mt-1.5 flex items-center gap-2 text-[10px] font-mono text-slate-500">
             {message.latencyMs && <span>{(message.latencyMs / 1000).toFixed(2)}s</span>}
             {message.tokens && <><span className="text-slate-200">·</span><span>{message.tokens} tokens</span></>}
           </div>
@@ -999,7 +999,7 @@ function TypingIndicator({ model }: { model: AIModel }) {
         <div className="mb-1.5 text-[10px] uppercase tracking-[0.18em] text-slate-500">
           Axis · <span className="normal-case tracking-normal font-mono text-[color:var(--color-iris-cyan)]/90">{model.name}</span>
         </div>
-        <div className="inline-flex items-center gap-2 rounded-2xl border border-slate-200/70 px-4 py-3" style={{
+        <div className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 px-4 py-3" style={{
           background: "linear-gradient(180deg, rgba(255,255,255,0.92), rgba(250,250,255,0.86))",
           boxShadow: "0 10px 30px -18px rgba(80,90,160,0.25), inset 0 1px 0 rgba(255,255,255,0.9)",
         }}>
@@ -1019,7 +1019,7 @@ function EmptyState({ onPick, model }: { onPick: (q: string) => void; model: AIM
   const bento = [
     {
       key: "hero",
-      cls: "sm:col-span-2 sm:row-span-2",
+      cls: "sm:col-span-2 sm:row-span-2 sm:min-h-[280px]",
       accent: "oklch(0.62 0.19 275)",
       icon: Zap,
       eyebrow: "Signature capability",
@@ -1108,15 +1108,15 @@ function EmptyState({ onPick, model }: { onPick: (q: string) => void; model: AIM
                 <span className="text-[9.5px] font-semibold uppercase tracking-[0.2em] text-slate-500">{b.eyebrow}</span>
               </div>
 
-              <div className={cn("relative", b.large ? "mt-auto pt-8" : "mt-4")}>
-                <h3 className={cn("font-display font-bold text-slate-900", b.large ? "text-2xl sm:text-3xl" : "text-lg")}>
+              <div className={cn("relative", b.large ? "mt-6" : "mt-4")}>
+                <h3 className={cn("font-display font-bold text-slate-900", b.large ? "text-2xl sm:text-[28px]" : "text-lg")}>
                   {b.title}
                 </h3>
-                <p className={cn("mt-2 leading-relaxed text-slate-500", b.large ? "text-[13.5px] max-w-sm" : "text-[12px]")}>
+                <p className={cn("mt-2 leading-relaxed text-slate-600", b.large ? "text-[13.5px] max-w-sm" : "text-[12px]")}>
                   {b.body}
                 </p>
                 {(b.large || b.cta) && (
-                  <div className="mt-4 inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-widest text-slate-700 transition group-hover:text-slate-900">
+                  <div className="mt-4 inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-widest text-[color:var(--color-iris-ink)] transition group-hover:text-[color:var(--color-iris-deep)]">
                     Compose
                     <ChevronRight className="h-3.5 w-3.5 transition group-hover:translate-x-0.5" />
                   </div>
@@ -1127,12 +1127,12 @@ function EmptyState({ onPick, model }: { onPick: (q: string) => void; model: AIM
         })}
       </div>
 
-      <div className="mt-8 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-[10.5px] text-slate-500">
-        <span className="flex items-center gap-1.5"><Shield className="h-3 w-3 text-emerald-400" />E2E encrypted</span>
-        <span className="text-slate-200">·</span>
-        <span className="flex items-center gap-1.5"><Crown className="h-3 w-3 text-[color:var(--color-iris)]" />SOC 2 · ISO 27001</span>
-        <span className="text-slate-200">·</span>
-        <span className="flex items-center gap-1.5"><Zap className="h-3 w-3 text-[color:var(--color-iris-cyan)]" />Sub-second routing</span>
+      <div className="mt-8 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-[10.5px] text-slate-600">
+        <span className="flex items-center gap-1.5"><Shield className="h-3 w-3 text-[color:var(--color-iris-cyan)]" />E2E encrypted</span>
+        <span className="text-slate-300">·</span>
+        <span className="flex items-center gap-1.5"><Crown className="h-3 w-3 text-[color:var(--color-iris-deep)]" />SOC 2 · ISO 27001</span>
+        <span className="text-slate-300">·</span>
+        <span className="flex items-center gap-1.5"><Zap className="h-3 w-3 text-[color:var(--color-iris-warm)]" />Sub-second routing</span>
       </div>
     </div>
   );
