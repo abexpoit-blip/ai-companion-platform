@@ -651,7 +651,7 @@ function ChatWorkspaceInner() {
             </span>
             <Link
               to="/image"
-              className="inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-white/[0.03] px-2.5 py-1.5 text-[11px] font-medium text-white/80 transition hover:border-[color:var(--color-iris-cyan)]/40 hover:bg-[color:var(--color-iris-cyan)]/[0.08] hover:text-slate-900"
+              className="inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-white/70 px-2.5 py-1.5 text-[11px] font-medium text-slate-700 transition hover:border-[color:var(--color-iris-cyan)]/40 hover:bg-[color:var(--color-iris-cyan)]/[0.08] hover:text-slate-900"
               title="Free unlimited AI image generation"
             >
               <span className="relative flex h-3.5 w-3.5 items-center justify-center">
@@ -919,7 +919,7 @@ function MessageBubble({ message }: { message: ChatMessage }) {
         className={cn(
           "flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border",
           isUser
-            ? "border-slate-200 bg-white/[0.05]"
+            ? "border-slate-200 bg-white/80"
             : "border-transparent p-[1.5px]",
         )}
         style={!isUser ? { background: "var(--iris-gradient)" } : undefined}
@@ -1001,7 +1001,7 @@ function TypingIndicator({ model }: { model: AIModel }) {
         <div className="inline-flex items-center gap-2 rounded-2xl border border-slate-200/70 px-4 py-3" style={{
           background: "linear-gradient(180deg, rgba(18,16,28,0.7), rgba(10,10,18,0.7))",
         }}>
-          <div className="relative h-4 w-16 overflow-hidden rounded-full bg-white/[0.04]">
+          <div className="relative h-4 w-16 overflow-hidden rounded-full bg-slate-100">
             <div className="absolute inset-0 shimmer-gold" />
           </div>
           <span className="text-[11px] text-slate-700">reasoning…</span>
@@ -1061,7 +1061,7 @@ function EmptyState({ onPick, model }: { onPick: (q: string) => void; model: AIM
 
   return (
     <div className="mx-auto flex h-full w-full max-w-5xl flex-col items-center justify-center px-4 py-10 sm:px-6">
-      <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white/[0.03] px-3 py-1 text-[10px] uppercase tracking-[0.22em] text-[color:var(--color-iris-soft)] backdrop-blur">
+      <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white/70 px-3 py-1 text-[10px] uppercase tracking-[0.22em] text-[color:var(--color-iris-soft)] backdrop-blur">
         <span className="h-1.5 w-1.5 rounded-full bg-[color:var(--color-iris-cyan)] shadow-[0_0_8px_rgba(120,200,240,0.9)]" />
         <TierI className="h-3 w-3" />
         <span>{model.tier} · {model.name}</span>
@@ -1114,7 +1114,7 @@ function EmptyState({ onPick, model }: { onPick: (q: string) => void; model: AIM
                   {b.body}
                 </p>
                 {(b.large || b.cta) && (
-                  <div className="mt-4 inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-widest text-white/80 transition group-hover:text-slate-900">
+                  <div className="mt-4 inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-widest text-slate-700 transition group-hover:text-slate-900">
                     Compose
                     <ChevronRight className="h-3.5 w-3.5 transition group-hover:translate-x-0.5" />
                   </div>
