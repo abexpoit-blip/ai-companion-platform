@@ -49,6 +49,40 @@ interface GenItem {
   loaded?: boolean;
 }
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function isPollModel(value: unknown): value is PollModel {
+  return typeof value === "string" && POLL_MODELS.some((m) => m.id === value);
+}
+
+function isPollRatio(value: unknown): value is PollRatio {
+  return typeof value === "string" && POLL_RATIOS.some((r) => r.id === value);
+}
+
+function finiteNumber(value: unknown, fallback: number) {
+  return typeof value === "number" && Number.isFinite(value) ? value : fallback;
+}
+
+function normalizeGalleryItem(value: unknown): GenItem | null {
+  if (!isRecord(value)) return null;
+  if (typeof value.prompt !== "string" || !value.prompt.trim()) return null;
+  if (typeof value.url !== "string" || !value.url.startsWith("https://image.pollinations.ai/")) {
+    return null;
+  }
+  return {
+    id: typeof value.id === "string" && value.id ? value.id : crypto.randomUUID(),
+    prompt: value.prompt,
+    url: value.url,
+    model: isPollModel(value.model) ? value.model : "flux",
+    ratio: isPollRatio(value.ratio) ? value.ratio : "1:1",
+    seed: finiteNumber(value.seed, randomSeed()),
+    createdAt: finiteNumber(value.createdAt, Date.now()),
+    loaded: typeof value.loaded === "boolean" ? value.loaded : undefined,
+  };
+}
+
 const SUGGESTIONS = [
   "A neon-lit cyberpunk alleyway at night, rain reflections, cinematic 35mm",
   "Editorial portrait of a woman in iridescent chrome couture, studio lighting",
@@ -71,9 +105,15 @@ function ImageStudio() {
   useEffect(() => {
     try {
       const raw = localStorage.getItem("nx.image.gallery");
-      if (raw) setItems(JSON.parse(raw) as GenItem[]);
+      if (!raw) return;
+      const parsed = JSON.parse(raw) as unknown;
+      const safeItems = Array.isArray(parsed)
+        ? parsed.map(normalizeGalleryItem).filter((item): item is GenItem => Boolean(item))
+        : [];
+      setItems(safeItems);
+      if (safeItems.length === 0 && raw) localStorage.removeItem("nx.image.gallery");
     } catch {
-      /* ignore */
+      localStorage.removeItem("nx.image.gallery");
     }
   }, []);
 
