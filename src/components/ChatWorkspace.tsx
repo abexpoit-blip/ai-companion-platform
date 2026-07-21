@@ -50,15 +50,78 @@ const STORAGE_KEY = "codeaxis.chat.v2";
 
 type Persisted = { threads: ChatThread[]; activeId: string; modelId: string };
 
+const createFreshThread = (): ChatThread => ({
+  id: uid(),
+  title: "Untitled dossier",
+  messages: [],
+  updatedAt: Date.now(),
+});
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function finiteNumber(value: unknown, fallback: number) {
+  return typeof value === "number" && Number.isFinite(value) ? value : fallback;
+}
+
+function normalizeMessage(value: unknown): ChatMessage | null {
+  if (!isRecord(value)) return null;
+  const role = value.role === "user" || value.role === "assistant" ? value.role : null;
+  const content = typeof value.content === "string" ? value.content : null;
+  if (!role || content === null) return null;
+  return {
+    id: typeof value.id === "string" && value.id ? value.id : uid(),
+    role,
+    content,
+    createdAt: finiteNumber(value.createdAt, Date.now()),
+    model: typeof value.model === "string" ? value.model : undefined,
+    tokens: typeof value.tokens === "number" && Number.isFinite(value.tokens) ? value.tokens : undefined,
+    latencyMs: typeof value.latencyMs === "number" && Number.isFinite(value.latencyMs) ? value.latencyMs : undefined,
+  };
+}
+
+function normalizeThread(value: unknown): ChatThread | null {
+  if (!isRecord(value)) return null;
+  const messages = Array.isArray(value.messages)
+    ? value.messages.map(normalizeMessage).filter((m): m is ChatMessage => Boolean(m))
+    : [];
+  const fallbackTitle = messages.find((m) => m.role === "user")?.content.slice(0, 48) || "Untitled dossier";
+  const latestMessageAt = messages.reduce((latest, m) => Math.max(latest, m.createdAt), 0);
+  return {
+    id: typeof value.id === "string" && value.id ? value.id : uid(),
+    title: typeof value.title === "string" && value.title.trim() ? value.title.trim() : fallbackTitle,
+    messages,
+    updatedAt: finiteNumber(value.updatedAt, latestMessageAt || Date.now()),
+    model: typeof value.model === "string" ? value.model : undefined,
+  };
+}
+
+function normalizePersisted(value: unknown): Persisted | null {
+  if (!isRecord(value)) return null;
+  const threads = Array.isArray(value.threads)
+    ? value.threads.map(normalizeThread).filter((t): t is ChatThread => Boolean(t))
+    : [];
+  const safeThreads = threads.length > 0 ? threads : [createFreshThread()];
+  const activeId =
+    typeof value.activeId === "string" && safeThreads.some((t) => t.id === value.activeId)
+      ? value.activeId
+      : safeThreads[0].id;
+  const modelId =
+    typeof value.modelId === "string" && AI_MODELS.some((m) => m.id === value.modelId)
+      ? value.modelId
+      : AI_MODELS[0].id;
+  return { threads: safeThreads, activeId, modelId };
+}
+
 function loadPersisted(): Persisted | null {
   if (typeof window === "undefined") return null;
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
     if (!raw) return null;
-    const parsed = JSON.parse(raw) as Persisted;
-    if (!parsed || !Array.isArray(parsed.threads)) return null;
-    return parsed;
+    return normalizePersisted(JSON.parse(raw));
   } catch {
+    window.localStorage.removeItem(STORAGE_KEY);
     return null;
   }
 }
@@ -96,14 +159,10 @@ function ChatWorkspaceInner() {
     const persisted = loadPersisted();
     if (persisted && persisted.threads.length > 0) {
       setThreads(persisted.threads);
-      setActiveId(
-        persisted.activeId && persisted.threads.some((t) => t.id === persisted.activeId)
-          ? persisted.activeId
-          : persisted.threads[0].id,
-      );
-      if (persisted.modelId) setModelId(persisted.modelId);
+      setActiveId(persisted.activeId);
+      setModelId(persisted.modelId);
     } else {
-      const first: ChatThread = { id: uid(), title: "Untitled dossier", messages: [], updatedAt: Date.now() };
+      const first = createFreshThread();
       setThreads([first]);
       setActiveId(first.id);
     }
@@ -214,6 +273,20 @@ function ChatWorkspaceInner() {
         model: reply.model,
         tokens: reply.tokens,
         latencyMs: reply.latencyMs,
+        createdAt: Date.now(),
+      };
+      updateThread(active.id, (t) => ({
+        ...t,
+        messages: [...t.messages, asstMsg],
+        updatedAt: Date.now(),
+      }));
+    } catch (error) {
+      const detail = error instanceof Error ? error.message : "The AI provider did not return a response.";
+      const asstMsg: ChatMessage = {
+        id: uid(),
+        role: "assistant",
+        content: `**Connection issue**\n\n${detail}\n\nPlease try again in a moment or switch to another Nexus model.`,
+        model: modelId,
         createdAt: Date.now(),
       };
       updateThread(active.id, (t) => ({
