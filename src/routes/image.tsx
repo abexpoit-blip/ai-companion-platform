@@ -210,7 +210,7 @@ function ImageStudio() {
           <div className="flex items-center gap-2">
             <div className="relative h-8 w-8 grid place-items-center rounded-lg overflow-hidden"
               style={{ background: "linear-gradient(135deg, var(--color-iris-deep), var(--color-iris-cyan))" }}>
-              <ImageIcon className="h-4 w-4 text-slate-900" />
+              <ImageIcon className="h-4 w-4 text-white" />
             </div>
             <div>
               <div className="text-[13px] font-semibold tracking-tight" style={{ fontFamily: "'Sora', sans-serif" }}>
@@ -342,7 +342,7 @@ function ImageStudio() {
           <button
             onClick={generate}
             disabled={!prompt.trim() || busy}
-            className="group relative w-full overflow-hidden rounded-2xl px-4 py-3.5 text-sm font-semibold text-slate-900 transition disabled:cursor-not-allowed disabled:opacity-40"
+            className="group relative w-full overflow-hidden rounded-2xl px-4 py-3.5 text-sm font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-40"
             style={{
               background:
                 "linear-gradient(135deg, var(--color-iris-deep), var(--color-iris-cyan) 60%, var(--color-iris-warm))",
@@ -374,7 +374,7 @@ function ImageStudio() {
               <div className="text-center">
                 <div className="mx-auto mb-4 grid h-16 w-16 place-items-center rounded-2xl"
                   style={{ background: "linear-gradient(135deg, var(--color-iris-deep), var(--color-iris-cyan))" }}>
-                  <ImageIcon className="h-7 w-7 text-slate-900" />
+                  <ImageIcon className="h-7 w-7 text-white" />
                 </div>
                 <h2 className="text-2xl font-semibold tracking-tight" style={{ fontFamily: "'Sora', sans-serif" }}>
                   Your gallery is empty
