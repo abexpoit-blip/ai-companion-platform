@@ -349,5 +349,29 @@
     background-color: var(--color-background);
     color: var(--color-foreground);
   }
+
+  /* Theme picker sliders */
+  .iris-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 16px;
+    width: 16px;
+    border-radius: 9999px;
+    background: white;
+    border: 2px solid var(--color-iris-deep);
+    box-shadow: 0 0 0 2px color-mix(in oklab, var(--color-iris) 40%, transparent),
+                0 4px 12px -2px color-mix(in oklab, var(--color-iris-deep) 60%, transparent);
+    cursor: pointer;
+  }
+  .iris-range::-moz-range-thumb {
+    height: 16px;
+    width: 16px;
+    border-radius: 9999px;
+    background: white;
+    border: 2px solid var(--color-iris-deep);
+    box-shadow: 0 0 0 2px color-mix(in oklab, var(--color-iris) 40%, transparent);
+    cursor: pointer;
+  }
 }
+
 
