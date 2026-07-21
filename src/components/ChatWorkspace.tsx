@@ -1019,7 +1019,7 @@ function EmptyState({ onPick, model }: { onPick: (q: string) => void; model: AIM
   const bento = [
     {
       key: "hero",
-      cls: "sm:col-span-2 sm:row-span-2",
+      cls: "sm:col-span-2 sm:row-span-2 sm:min-h-[280px]",
       accent: "oklch(0.62 0.19 275)",
       icon: Zap,
       eyebrow: "Signature capability",
