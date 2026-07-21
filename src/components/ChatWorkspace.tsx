@@ -556,13 +556,13 @@ export function ChatWorkspace() {
                     onClick={() => void handleSend()}
                     disabled={!input.trim() || isSending}
                     aria-label="Send"
-                    className="relative inline-flex h-9 w-9 items-center justify-center overflow-hidden rounded-xl text-black transition disabled:opacity-30 disabled:saturate-50"
+                    className="relative inline-flex h-10 w-10 items-center justify-center overflow-hidden rounded-2xl text-white transition hover:scale-[1.04] active:scale-95 disabled:opacity-30 disabled:saturate-50"
                     style={{
-                      background: "linear-gradient(135deg, oklch(0.94 0.08 88), oklch(0.72 0.14 74))",
-                      boxShadow: "0 8px 24px -8px rgba(220,180,90,0.6), inset 0 1px 0 rgba(255,255,255,0.4)",
+                      background: "linear-gradient(135deg, oklch(0.62 0.19 275), oklch(0.7 0.17 320) 55%, oklch(0.72 0.14 210))",
+                      boxShadow: "0 10px 28px -8px oklch(0.62 0.19 275 / 0.7), inset 0 1px 0 rgba(255,255,255,0.35)",
                     }}
                   >
-                    <ArrowUp className="h-4 w-4" strokeWidth={2.5} />
+                    <ArrowUp className="h-4 w-4" strokeWidth={2.75} />
                   </button>
                 </div>
               </div>
