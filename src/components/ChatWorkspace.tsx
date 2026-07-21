@@ -1050,7 +1050,7 @@ function EmptyState({ onPick, model }: { onPick: (q: string) => void; model: AIM
     },
     {
       key: "cloud",
-      cls: "sm:col-span-2",
+      cls: "sm:col-span-3",
       accent: "oklch(0.78 0.13 285)",
       icon: Shield,
       eyebrow: "Infrastructure",
