@@ -999,7 +999,8 @@ function TypingIndicator({ model }: { model: AIModel }) {
           Axis · <span className="normal-case tracking-normal font-mono text-[color:var(--color-iris-cyan)]/90">{model.name}</span>
         </div>
         <div className="inline-flex items-center gap-2 rounded-2xl border border-slate-200/70 px-4 py-3" style={{
-          background: "linear-gradient(180deg, rgba(18,16,28,0.7), rgba(10,10,18,0.7))",
+          background: "linear-gradient(180deg, rgba(255,255,255,0.92), rgba(250,250,255,0.86))",
+          boxShadow: "0 10px 30px -18px rgba(80,90,160,0.25), inset 0 1px 0 rgba(255,255,255,0.9)",
         }}>
           <div className="relative h-4 w-16 overflow-hidden rounded-full bg-slate-100">
             <div className="absolute inset-0 shimmer-gold" />
