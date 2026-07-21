@@ -189,14 +189,25 @@ export function ChatWorkspace() {
   };
 
   return (
-    <div className="dark flex h-screen w-full bg-[#0b0d12] text-slate-100">
+    <div className="dark relative flex h-screen w-full overflow-hidden bg-[#0b0d12] text-slate-100">
+      {/* Mobile backdrop */}
+      {isMobile && sidebarOpen && (
+        <div
+          onClick={() => setSidebarOpen(false)}
+          className="fixed inset-0 z-30 bg-black/60 backdrop-blur-sm md:hidden"
+          aria-hidden
+        />
+      )}
+
       {/* Sidebar */}
       <aside
         className={cn(
-          "flex h-full flex-col border-r border-white/5 bg-[#0f1219] transition-all duration-300",
-          sidebarOpen ? "w-72" : "w-0 overflow-hidden",
+          "flex h-full w-72 shrink-0 flex-col border-r border-white/5 bg-[#0f1219] transition-transform duration-300",
+          "fixed inset-y-0 left-0 z-40 md:relative md:translate-x-0",
+          sidebarOpen ? "translate-x-0" : "-translate-x-full md:w-0 md:-translate-x-0 md:overflow-hidden md:border-0",
         )}
       >
+
         <div className="flex items-center gap-2 px-4 pt-4 pb-3">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600">
             <Sparkles className="h-4 w-4 text-white" />
