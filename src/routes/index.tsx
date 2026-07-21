@@ -34,10 +34,10 @@ function IndexPage() {
 
 function ChatBootScreen() {
   return (
-    <main className="grid min-h-dvh place-items-center bg-[#020205] px-4 text-neutral-100">
-      <div className="flex items-center gap-3 rounded-2xl border border-white/[0.08] bg-white/[0.03] px-4 py-3 shadow-[0_30px_80px_-35px_rgba(0,0,0,0.9)]">
+    <main className="grid min-h-dvh place-items-center px-4 text-slate-800" style={{ background: "linear-gradient(135deg, #eef1ff 0%, #f6f0ff 30%, #eaf6f4 65%, #eef4ff 100%)" }}>
+      <div className="flex items-center gap-3 rounded-2xl border border-slate-200/70 bg-white/70 px-4 py-3 shadow-[0_30px_80px_-40px_rgba(80,90,160,0.35)] backdrop-blur">
         <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-[color:var(--color-iris-cyan)]" />
-        <span className="text-xs uppercase tracking-[0.22em] text-neutral-400">Booting Nexus X AI</span>
+        <span className="text-xs uppercase tracking-[0.22em] text-slate-500">Booting Nexus X AI</span>
       </div>
     </main>
   );
