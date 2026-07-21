@@ -470,9 +470,10 @@ export function ChatWorkspace() {
             {modelOpen && (
               <>
                 <div className="fixed inset-0 z-40" onClick={() => setModelOpen(false)} />
-                <div className="absolute left-0 top-[calc(100%+8px)] z-50 w-[360px] overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0b0908] p-2 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.9)]" style={{
-                  backgroundImage: "linear-gradient(180deg, rgba(30,22,10,0.4), rgba(10,10,12,0.6))",
+                <div className="absolute left-0 top-[calc(100%+8px)] z-50 w-[360px] overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0a0a14] p-2 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.9)]" style={{
+                  backgroundImage: "linear-gradient(180deg, color-mix(in oklab, var(--color-iris-deep) 22%, transparent), rgba(10,10,18,0.6))",
                 }}>
+
                   <div className="flex items-center justify-between px-2 py-1.5">
                     <span className="text-[10px] uppercase tracking-[0.2em] text-neutral-500">Select Intelligence</span>
                     <span className="text-[10px] text-neutral-600">4 available</span>
