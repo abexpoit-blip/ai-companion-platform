@@ -1076,7 +1076,7 @@ function EmptyState({ onPick, model }: { onPick: (q: string) => void; model: AIM
         Architect your vision with Nexus X AI — a free multi-model intelligence network wired to Groq, Gemini, DeepSeek and more.
       </p>
 
-      <div className="mt-10 grid w-full grid-cols-1 grid-rows-none gap-3 sm:grid-cols-3 sm:grid-rows-2 sm:gap-4" style={{ minHeight: "clamp(280px, 40vh, 380px)" }}>
+      <div className="mt-10 grid w-full grid-cols-1 gap-3 sm:grid-cols-3 sm:auto-rows-[minmax(170px,auto)] sm:gap-4">
         {bento.map((b) => {
           const I = b.icon;
           return (
