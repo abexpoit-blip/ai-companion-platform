@@ -17,12 +17,27 @@ interface Props {
   tab: Tab;
 }
 
+// Resolve either a default export or the first exported function/component
+// so AI-generated snippets with `export function Foo()` still render.
 const REACT_INDEX = `import React from "react";
 import { createRoot } from "react-dom/client";
-import App from "./App";
+import * as Mod from "./App";
 import "./styles.css";
 
-createRoot(document.getElementById("root")).render(<App />);
+function Fallback() {
+  return React.createElement(
+    "pre",
+    { style: { color: "#ff9aa2", fontFamily: "ui-monospace, monospace", padding: 16 } },
+    "No React component exported from the snippet.\\nAdd `export default` or `export function ComponentName()`."
+  );
+}
+
+const picked =
+  Mod.default ||
+  Object.values(Mod).find((v) => typeof v === "function") ||
+  Fallback;
+
+createRoot(document.getElementById("root")).render(React.createElement(picked));
 `;
 
 const REACT_STYLES = `:root { color-scheme: dark; }
