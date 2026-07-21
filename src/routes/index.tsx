@@ -5,10 +5,12 @@ export const Route = createFileRoute("/")({
   component: ChatWorkspace,
   head: () => ({
     meta: [
-      { title: "CodeAxis Studio AI — Chat Workspace" },
-      { name: "description", content: "A sleek AI chat workspace by CodeAxis Studio." },
-      { property: "og:title", content: "CodeAxis Studio AI" },
-      { property: "og:description", content: "A sleek AI chat workspace by CodeAxis Studio." },
+      { title: "Nexus X AI — Free Multi-Model Chat Workspace" },
+      { name: "description", content: "Nexus X AI — a premium chat workspace wired to free AI models (Groq, Gemini, DeepSeek, Llama, Ollama)." },
+      { property: "og:title", content: "Nexus X AI" },
+      { property: "og:description", content: "Free multi-model AI workspace with live code preview." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
 });
