@@ -857,15 +857,15 @@ function CodeBlock({ language, value }: { language: string; value: string }) {
   };
   return (
     <div className="group relative my-4 overflow-hidden rounded-xl border border-slate-200/80" style={{
-      background: "linear-gradient(180deg, #0a0908 0%, #0d0b09 100%)",
-      boxShadow: "inset 0 1px 0 rgba(255,220,150,0.04)",
+      background: "linear-gradient(180deg, #ffffff 0%, #f7f7fb 100%)",
+      boxShadow: "0 10px 30px -18px rgba(80,90,160,0.18), inset 0 1px 0 rgba(255,255,255,0.9)",
     }}>
-      <div className="flex items-center justify-between border-b border-slate-200/70 bg-white/70 px-3 py-1.5">
+      <div className="flex items-center justify-between border-b border-slate-200/70 bg-white/80 px-3 py-1.5">
         <div className="flex items-center gap-2">
           <span className="flex gap-1">
-            <span className="h-2 w-2 rounded-full bg-white/10" />
-            <span className="h-2 w-2 rounded-full bg-white/10" />
-            <span className="h-2 w-2 rounded-full bg-[color:var(--color-gold)]/40" />
+            <span className="h-2 w-2 rounded-full bg-[color:var(--color-iris-warm)]/50" />
+            <span className="h-2 w-2 rounded-full bg-[color:var(--color-iris)]/50" />
+            <span className="h-2 w-2 rounded-full bg-[color:var(--color-iris-cyan)]/60" />
           </span>
           <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500">{language}</span>
         </div>
@@ -873,7 +873,7 @@ function CodeBlock({ language, value }: { language: string; value: string }) {
           {previewable && (
             <button
               onClick={() => openPreview(value, language)}
-              className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-[10.5px] text-[color:var(--color-iris-cyan)] hover:bg-[color:var(--color-iris)]/10"
+              className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-[10.5px] text-[color:var(--color-iris-deep)] hover:bg-[color:var(--color-iris)]/10"
               aria-label="Open in live preview"
               title="Open in live workspace"
             >
@@ -883,17 +883,17 @@ function CodeBlock({ language, value }: { language: string; value: string }) {
           )}
           <button
             onClick={onCopy}
-            className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-[10.5px] text-slate-500 hover:bg-slate-900/5 hover:text-[color:var(--color-gold)]"
+            className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-[10.5px] text-slate-500 hover:bg-slate-900/5 hover:text-[color:var(--color-iris-deep)]"
             aria-label="Copy code"
           >
-            {copied ? <Check className="h-3 w-3 text-[color:var(--color-gold)]" /> : <Copy className="h-3 w-3" />}
+            {copied ? <Check className="h-3 w-3 text-[color:var(--color-iris-deep)]" /> : <Copy className="h-3 w-3" />}
             <span className="uppercase tracking-wider">{copied ? "Copied" : "Copy"}</span>
           </button>
         </div>
       </div>
       <SyntaxHighlighter
         language={language}
-        style={oneDark}
+        style={oneLight}
         PreTag="div"
         customStyle={{
           margin: 0,
