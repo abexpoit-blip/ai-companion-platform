@@ -49,10 +49,13 @@ const VANILLA_HTML = (js: string) => `<!doctype html>
 </html>`;
 
 export default function SandpackStage({ payload, tab }: Props) {
-  const { template, files } = useMemo(() => {
+  const { template, files } = useMemo<{
+    template: "react" | "static";
+    files: SandpackFiles;
+  }>(() => {
     if (payload.lang === "react") {
       return {
-        template: "react" as const,
+        template: "react",
         files: {
           "/App.js": { code: payload.code },
           "/index.js": { code: REACT_INDEX, hidden: true },
@@ -62,18 +65,13 @@ export default function SandpackStage({ payload, tab }: Props) {
     }
     if (payload.lang === "html") {
       return {
-        template: "static" as const,
-        files: {
-          "/index.html": { code: payload.code },
-        },
+        template: "static",
+        files: { "/index.html": { code: payload.code } },
       };
     }
-    // vanilla js
     return {
-      template: "static" as const,
-      files: {
-        "/index.html": { code: VANILLA_HTML(payload.code) },
-      },
+      template: "static",
+      files: { "/index.html": { code: VANILLA_HTML(payload.code) } },
     };
   }, [payload]);
 
