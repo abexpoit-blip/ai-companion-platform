@@ -274,16 +274,20 @@ export function ChatWorkspace() {
         <div className="px-4 pb-3">
           <button
             onClick={newChat}
-            className="group relative flex w-full items-center justify-between overflow-hidden rounded-xl border border-[color:var(--color-gold)]/25 px-3.5 py-2.5 text-sm text-neutral-100 transition hover:border-[color:var(--color-gold)]/55"
-            style={{ background: "linear-gradient(135deg, rgba(60,45,20,0.5), rgba(20,15,10,0.4))" }}
+            className="group relative flex w-full items-center justify-between overflow-hidden rounded-xl px-3.5 py-2.5 text-sm text-white transition"
+            style={{
+              background: "linear-gradient(135deg, oklch(0.62 0.19 275 / 0.35), oklch(0.72 0.14 210 / 0.25))",
+              boxShadow: "inset 0 1px 0 rgba(255,255,255,0.08), 0 8px 24px -12px oklch(0.62 0.19 275 / 0.6)",
+              border: "1px solid oklch(0.78 0.13 285 / 0.35)",
+            }}
           >
             <span className="flex items-center gap-2">
-              <Plus className="h-4 w-4 text-[color:var(--color-gold)]" />
-              <span className="font-medium tracking-tight">New Dossier</span>
+              <Plus className="h-4 w-4 text-[color:var(--color-iris-cyan)]" />
+              <span className="font-semibold tracking-tight">New Workspace</span>
             </span>
             <kbd className="rounded-md border border-white/10 bg-black/40 px-1.5 py-0.5 text-[10px] font-mono text-neutral-400">⌘N</kbd>
             <span className="pointer-events-none absolute inset-0 opacity-0 transition group-hover:opacity-100" style={{
-              background: "linear-gradient(120deg, transparent 30%, rgba(220,180,90,0.08) 50%, transparent 70%)",
+              background: "linear-gradient(120deg, transparent 30%, rgba(200,220,255,0.12) 50%, transparent 70%)",
             }} />
           </button>
         </div>
