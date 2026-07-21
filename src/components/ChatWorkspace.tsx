@@ -615,6 +615,9 @@ function ChatWorkspaceInner() {
           </div>
         </div>
       </main>
+
+      {/* Live preview panel (Sandpack) */}
+      <PreviewPanel />
     </div>
   );
 }
