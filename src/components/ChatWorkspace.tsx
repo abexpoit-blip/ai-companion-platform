@@ -958,15 +958,15 @@ function MessageBubble({ message }: { message: ChatMessage }) {
             border: "1px solid color-mix(in oklab, var(--color-iris) 40%, transparent)",
             boxShadow: "inset 0 1px 0 rgba(255,255,255,0.12), 0 8px 24px -12px color-mix(in oklab, var(--color-iris-deep) 60%, transparent)",
           } : {
-            background: "linear-gradient(180deg, rgba(18,16,28,0.72), rgba(10,10,18,0.72))",
-            boxShadow: "inset 0 1px 0 rgba(200,220,255,0.06)",
+            background: "linear-gradient(180deg, rgba(255,255,255,0.92), rgba(250,250,255,0.86))",
+            boxShadow: "0 10px 30px -18px rgba(80,90,160,0.25), inset 0 1px 0 rgba(255,255,255,0.9)",
           }}
         >
 
           {isUser ? (
             <div className="whitespace-pre-wrap break-words text-left">{message.content}</div>
           ) : (
-            <div className="prose prose-invert prose-sm max-w-none break-words prose-p:my-2 prose-headings:font-display prose-headings:tracking-tight prose-headings:mt-3 prose-headings:mb-2 prose-ul:my-2 prose-ol:my-2 prose-li:my-0.5 prose-strong:text-[color:var(--color-gold-soft)]">
+            <div className="prose prose-slate prose-sm max-w-none break-words prose-p:my-2 prose-headings:font-display prose-headings:tracking-tight prose-headings:mt-3 prose-headings:mb-2 prose-ul:my-2 prose-ol:my-2 prose-li:my-0.5 prose-strong:text-[color:var(--color-iris-deep)]">
               <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
                 {message.content}
               </ReactMarkdown>
