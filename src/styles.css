@@ -188,8 +188,15 @@
     border-color: var(--color-border);
   }
 
+  html, body {
+    font-family: var(--font-sans);
+    font-feature-settings: "ss01", "cv11";
+    -webkit-font-smoothing: antialiased;
+  }
+
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
   }
 }
+
