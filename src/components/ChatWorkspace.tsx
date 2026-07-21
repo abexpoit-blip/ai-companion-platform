@@ -514,16 +514,18 @@ export function ChatWorkspace() {
             )}
           </div>
 
-          <div className="ml-auto flex items-center gap-2 text-[11px] text-neutral-400">
+          <div className="ml-auto flex items-center gap-2 text-[11px] text-neutral-300">
             <span className="hidden items-center gap-1 rounded-md border border-white/[0.06] bg-black/30 px-2 py-1 sm:flex">
               <Shield className="h-3 w-3 text-emerald-400" />
               <span>End-to-end encrypted</span>
             </span>
             <span className="hidden items-center gap-1 rounded-md border border-white/[0.06] bg-black/30 px-2 py-1 font-mono md:flex">
-              <Zap className="h-3 w-3 text-[color:var(--color-gold)]" />
+              <Zap className="h-3 w-3 text-[color:var(--color-iris-cyan)]" />
               <span>{totalTokens.toLocaleString()} tok</span>
             </span>
+            <ThemePicker />
           </div>
+
         </header>
 
         {/* Messages */}
@@ -546,53 +548,51 @@ export function ChatWorkspace() {
           backdropFilter: "blur(10px)",
         }}>
           <div className="mx-auto max-w-3xl px-4 py-4 sm:px-6">
-            <div className="relative">
-              <div aria-hidden className="absolute -inset-[1.5px] rounded-[18px] opacity-40 blur-md transition group-focus-within:opacity-100" style={{ background: "linear-gradient(120deg, oklch(0.62 0.19 275), oklch(0.72 0.14 210), oklch(0.7 0.17 320))" }} />
-            <div
-              className="group relative rounded-2xl border border-white/[0.09] p-2 transition focus-within:border-[color:var(--color-iris)]/50"
-              style={{
-                background: "linear-gradient(180deg, rgba(14,14,22,0.85), rgba(8,8,14,0.85))",
-                boxShadow: "0 20px 60px -20px rgba(0,0,0,0.8), inset 0 1px 0 rgba(200,220,255,0.06)",
-              }}
-            >
-              <textarea
-                ref={taRef}
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={onKeyDown}
-                rows={1}
-                placeholder="Compose a query for Axis Intelligence…"
-                className="max-h-52 w-full resize-none bg-transparent px-3 pt-2.5 pb-1 text-[14px] leading-relaxed text-neutral-100 placeholder:text-neutral-500 focus:outline-none"
+            <div className="group relative">
+              <div
+                aria-hidden
+                className="pointer-events-none absolute -inset-[3px] rounded-[20px] opacity-40 blur-lg transition duration-500 group-focus-within:opacity-100 group-hover:opacity-80"
+                style={{ background: "var(--iris-gradient)" }}
               />
-              <div className="flex items-center justify-between px-1.5 pb-1 pt-1.5">
-                <div className="flex items-center gap-0.5">
-                  <ComposerBtn label="Attach"><Paperclip className="h-4 w-4" /></ComposerBtn>
-                  <ComposerBtn label="Image"><ImageIcon className="h-4 w-4" /></ComposerBtn>
-                  <ComposerBtn label="Voice"><Mic className="h-4 w-4" /></ComposerBtn>
-                  <ComposerBtn label="Commands"><Command className="h-4 w-4" /></ComposerBtn>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="hidden text-[10px] text-neutral-500 sm:inline">
-                    <kbd className="rounded border border-white/10 bg-black/40 px-1 py-0.5 font-mono">⏎</kbd> send
-                    <span className="mx-1 text-neutral-700">·</span>
-                    <kbd className="rounded border border-white/10 bg-black/40 px-1 py-0.5 font-mono">⇧⏎</kbd> newline
-                  </span>
-                  <button
-                    onClick={() => void handleSend()}
-                    disabled={!input.trim() || isSending}
-                    aria-label="Send"
-                    className="relative inline-flex h-10 w-10 items-center justify-center overflow-hidden rounded-2xl text-white transition hover:scale-[1.04] active:scale-95 disabled:opacity-30 disabled:saturate-50"
-                    style={{
-                      background: "linear-gradient(135deg, oklch(0.62 0.19 275), oklch(0.7 0.17 320) 55%, oklch(0.72 0.14 210))",
-                      boxShadow: "0 10px 28px -8px oklch(0.62 0.19 275 / 0.7), inset 0 1px 0 rgba(255,255,255,0.35)",
-                    }}
-                  >
-                    <ArrowUp className="h-4 w-4" strokeWidth={2.75} />
-                  </button>
+              <div
+                className="relative rounded-2xl border border-white/[0.09] p-2 transition focus-within:border-[color:var(--color-iris)]/60 iris-animated-border"
+                style={{
+                  background: "linear-gradient(180deg, rgba(14,14,22,0.88), rgba(8,8,14,0.88))",
+                  boxShadow: "0 20px 60px -20px rgba(0,0,0,0.8), inset 0 1px 0 rgba(200,220,255,0.06)",
+                }}
+              >
+                <textarea
+                  ref={taRef}
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={onKeyDown}
+                  rows={1}
+                  placeholder="Compose a query for Axis Intelligence…"
+                  className="max-h-52 w-full resize-none bg-transparent px-3 pt-2.5 pb-1 text-[14px] leading-relaxed text-neutral-50 placeholder:text-neutral-500 focus:outline-none"
+                />
+                <div className="flex items-center justify-between px-1.5 pb-1 pt-1.5">
+                  <div className="flex items-center gap-0.5">
+                    <ComposerBtn label="Attach"><Paperclip className="h-4 w-4" /></ComposerBtn>
+                    <ComposerBtn label="Image"><ImageIcon className="h-4 w-4" /></ComposerBtn>
+                    <ComposerBtn label="Voice"><Mic className="h-4 w-4" /></ComposerBtn>
+                    <ComposerBtn label="Commands"><Command className="h-4 w-4" /></ComposerBtn>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="hidden text-[10px] text-neutral-500 sm:inline">
+                      <kbd className="rounded border border-white/10 bg-black/40 px-1 py-0.5 font-mono">⏎</kbd> send
+                      <span className="mx-1 text-neutral-700">·</span>
+                      <kbd className="rounded border border-white/10 bg-black/40 px-1 py-0.5 font-mono">⇧⏎</kbd> newline
+                    </span>
+                    <SendButton
+                      onClick={() => void handleSend()}
+                      disabled={!input.trim() || isSending}
+                      loading={isSending}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
-            </div>
+
             <div className="mt-2.5 flex items-center justify-center gap-2 text-[10.5px] text-neutral-500">
               <span>Powered by <span className="text-[color:var(--color-gold)]">{model.name}</span></span>
               <span className="text-neutral-700">·</span>
