@@ -223,9 +223,12 @@ export function ChatWorkspace() {
 
   return (
     <div className="dark relative flex h-screen w-full overflow-hidden text-neutral-100" style={{
-      background: "radial-gradient(120% 80% at 15% 0%, oklch(0.16 0.02 80 / 0.35), transparent 60%), radial-gradient(90% 70% at 100% 100%, oklch(0.14 0.03 260 / 0.35), transparent 55%), #060606",
+      background: "#020205",
     }}>
-      {/* Grain overlay */}
+      {/* Iridescent ambient blobs */}
+      <div aria-hidden className="pointer-events-none absolute -top-[15%] left-[15%] h-[620px] w-[620px] rounded-full iris-drift" style={{ background: "radial-gradient(circle, oklch(0.62 0.19 275 / 0.35), transparent 70%)", filter: "blur(120px)" }} />
+      <div aria-hidden className="pointer-events-none absolute -bottom-[10%] right-[5%] h-[520px] w-[520px] rounded-full iris-drift" style={{ background: "radial-gradient(circle, oklch(0.72 0.14 210 / 0.28), transparent 70%)", filter: "blur(120px)", animationDelay: "-6s" }} />
+      <div aria-hidden className="pointer-events-none absolute top-[30%] right-[20%] h-[360px] w-[360px] rounded-full iris-drift" style={{ background: "radial-gradient(circle, oklch(0.7 0.17 320 / 0.22), transparent 70%)", filter: "blur(120px)", animationDelay: "-10s" }} />
       <div className="pointer-events-none absolute inset-0 grain" aria-hidden />
 
       {/* Mobile backdrop */}
