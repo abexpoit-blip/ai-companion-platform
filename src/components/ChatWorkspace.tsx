@@ -561,40 +561,40 @@ function ChatWorkspaceInner() {
       {/* Main */}
       <main className="relative flex h-full flex-1 flex-col">
         {/* Header */}
-        <header className="relative z-10 flex items-center gap-3 border-b border-slate-200/70 px-4 py-3 sm:px-6" style={{
+        <header className="relative z-10 flex items-center gap-2 border-b border-slate-200/70 px-3 py-3 sm:gap-3 sm:px-6" style={{
           background: "linear-gradient(180deg, rgba(255,255,255,0.75) 0%, rgba(255,255,255,0.35) 100%)",
           backdropFilter: "blur(10px)",
         }}>
 
           <button
             onClick={() => setSidebarOpen((v) => !v)}
-            className="rounded-md p-1.5 text-slate-500 hover:bg-slate-900/5 hover:text-slate-900"
+            className="shrink-0 rounded-md p-1.5 text-slate-500 hover:bg-slate-900/5 hover:text-slate-900"
             aria-label="Toggle sidebar"
           >
             {isMobile ? <Menu className="h-4 w-4" /> : sidebarOpen ? <PanelLeftClose className="h-4 w-4" /> : <PanelLeft className="h-4 w-4" />}
           </button>
 
           {/* Model selector */}
-          <div className="relative">
+          <div className="relative min-w-0 flex-1 sm:flex-none">
             <button
               onClick={() => setModelOpen((v) => !v)}
-              className="flex items-center gap-2.5 rounded-xl border border-slate-200/80 bg-white/60 py-1.5 pl-2 pr-3 text-left transition hover:border-[color:var(--color-gold)]/40"
+              className="flex w-full items-center gap-2 rounded-xl border border-slate-200/80 bg-white/60 py-1.5 pl-1.5 pr-2 text-left transition hover:border-[color:var(--color-gold)]/40 sm:w-auto sm:gap-2.5 sm:pl-2 sm:pr-3"
             >
-              <span className="flex h-7 w-7 items-center justify-center rounded-lg border border-[color:var(--color-gold)]/30 bg-white/70">
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-[color:var(--color-gold)]/30 bg-white/70">
                 {(() => { const I = tierIcon(model.tier); return <I className="h-3.5 w-3.5 text-[color:var(--color-gold)]" />; })()}
               </span>
-              <span className="flex flex-col leading-tight">
-                <span className="text-[12px] text-slate-500">
+              <span className="flex min-w-0 flex-col leading-tight">
+                <span className="hidden text-[11px] text-slate-500 sm:block">
                   <span className="text-[color:var(--color-gold)]">{model.tier}</span> · Model
                 </span>
-                <span className="text-[13px] font-medium text-slate-900">{model.name}</span>
+                <span className="truncate text-[13px] font-medium text-slate-900">{model.name}</span>
               </span>
-              <ChevronDown className={cn("h-3.5 w-3.5 text-slate-500 transition", modelOpen && "rotate-180")} />
+              <ChevronDown className={cn("h-3.5 w-3.5 shrink-0 text-slate-500 transition", modelOpen && "rotate-180")} />
             </button>
             {modelOpen && (
               <>
                 <div className="fixed inset-0 z-40" onClick={() => setModelOpen(false)} />
-                <div className="absolute left-0 top-[calc(100%+8px)] z-50 w-[360px] overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-2 shadow-[0_30px_80px_-20px_rgba(80,90,160,0.35)]" style={{
+                <div className="absolute left-0 top-[calc(100%+8px)] z-50 w-[min(360px,calc(100vw-24px))] overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-2 shadow-[0_30px_80px_-20px_rgba(80,90,160,0.35)]" style={{
                   backgroundImage: "linear-gradient(180deg, rgba(255,255,255,0.98), rgba(248,246,255,0.95))",
                 }}>
 
@@ -614,14 +614,14 @@ function ChatWorkspaceInner() {
                           active ? "bg-[color:var(--color-gold)]/10" : "hover:bg-slate-900/5",
                         )}
                       >
-                        <span className="mt-0.5 flex h-9 w-9 items-center justify-center rounded-lg border border-[color:var(--color-gold)]/25 bg-white/70">
+                        <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[color:var(--color-gold)]/25 bg-white/70">
                           <I className="h-4 w-4 text-[color:var(--color-gold)]" />
                         </span>
                         <span className="min-w-0 flex-1">
                           <span className="flex items-center gap-1.5">
-                            <span className="text-[13px] font-medium text-slate-900">{m.name}</span>
+                            <span className="truncate text-[13px] font-medium text-slate-900">{m.name}</span>
                             {m.badge && (
-                              <span className="rounded-sm bg-[color:var(--color-gold)]/15 px-1 py-px text-[9px] font-medium uppercase tracking-wider text-[color:var(--color-gold)]">{m.badge}</span>
+                              <span className="shrink-0 rounded-sm bg-[color:var(--color-gold)]/15 px-1 py-px text-[9px] font-medium uppercase tracking-wider text-[color:var(--color-gold)]">{m.badge}</span>
                             )}
                           </span>
                           <span className="mt-0.5 block truncate text-[11px] text-slate-500">{m.tagline}</span>
@@ -631,7 +631,7 @@ function ChatWorkspaceInner() {
                             <span className="font-mono">{m.price}</span>
                           </span>
                         </span>
-                        {active && <Check className="mt-2 h-3.5 w-3.5 text-[color:var(--color-gold)]" />}
+                        {active && <Check className="mt-2 h-3.5 w-3.5 shrink-0 text-[color:var(--color-gold)]" />}
                       </button>
                     );
                   })}
@@ -640,9 +640,9 @@ function ChatWorkspaceInner() {
             )}
           </div>
 
-          <div className="ml-auto flex items-center gap-2 text-[11px] text-slate-700">
-            <span className="hidden items-center gap-1 rounded-md border border-slate-200/70 bg-white/60 px-2 py-1 sm:flex">
-              <Shield className="h-3 w-3 text-emerald-400" />
+          <div className="ml-auto flex shrink-0 items-center gap-1.5 text-[11px] text-slate-700 sm:gap-2">
+            <span className="hidden items-center gap-1 rounded-md border border-slate-200/70 bg-white/60 px-2 py-1 lg:flex">
+              <Shield className="h-3 w-3 text-emerald-500" />
               <span>End-to-end encrypted</span>
             </span>
             <span className="hidden items-center gap-1 rounded-md border border-slate-200/70 bg-white/60 px-2 py-1 font-mono md:flex">
@@ -651,14 +651,15 @@ function ChatWorkspaceInner() {
             </span>
             <Link
               to="/image"
-              className="inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-white/70 px-2.5 py-1.5 text-[11px] font-medium text-slate-700 transition hover:border-[color:var(--color-iris-cyan)]/40 hover:bg-[color:var(--color-iris-cyan)]/[0.08] hover:text-slate-900"
+              className="inline-flex h-8 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-md border border-slate-200 bg-white/70 px-2.5 text-[11px] font-medium text-slate-700 transition hover:border-[color:var(--color-iris-cyan)]/40 hover:bg-[color:var(--color-iris-cyan)]/[0.08] hover:text-slate-900"
               title="Free unlimited AI image generation"
             >
-              <span className="relative flex h-3.5 w-3.5 items-center justify-center">
+              <span className="relative flex h-3.5 w-3.5 shrink-0 items-center justify-center">
                 <span className="absolute inset-0 rounded-full opacity-70 blur-[3px]" style={{ background: "linear-gradient(135deg, var(--color-iris-deep), var(--color-iris-cyan))" }} />
                 <span className="relative h-2 w-2 rounded-full" style={{ background: "linear-gradient(135deg, var(--color-iris-cyan), var(--color-iris-warm))" }} />
               </span>
-              Image Studio
+              <span className="hidden sm:inline">Image Studio</span>
+              <span className="sm:hidden">Image</span>
             </Link>
             <ThemePicker />
           </div>
@@ -1049,7 +1050,7 @@ function EmptyState({ onPick, model }: { onPick: (q: string) => void; model: AIM
     },
     {
       key: "cloud",
-      cls: "sm:col-span-2",
+      cls: "sm:col-span-3",
       accent: "oklch(0.78 0.13 285)",
       icon: Shield,
       eyebrow: "Infrastructure",
@@ -1075,7 +1076,7 @@ function EmptyState({ onPick, model }: { onPick: (q: string) => void; model: AIM
         Architect your vision with Nexus X AI — a free multi-model intelligence network wired to Groq, Gemini, DeepSeek and more.
       </p>
 
-      <div className="mt-10 grid w-full grid-cols-1 grid-rows-none gap-3 sm:grid-cols-3 sm:grid-rows-2 sm:gap-4" style={{ minHeight: "clamp(280px, 40vh, 380px)" }}>
+      <div className="mt-10 grid w-full grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4" style={{ gridAutoRows: "minmax(170px, auto)" }}>
         {bento.map((b) => {
           const I = b.icon;
           return (
