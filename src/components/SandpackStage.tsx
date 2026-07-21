@@ -136,7 +136,9 @@ const MDX_HTML = (md: string) => {
 </html>`;
 };
 
-function buildFiles(payload: PreviewPayload): { template: "react" | "static"; files: SandpackFiles } {
+type SpTemplate = "react" | "react-ts" | "static" | "vanilla-ts";
+
+function buildFiles(payload: PreviewPayload): { template: SpTemplate; files: SandpackFiles } {
   const lang: PreviewLang = payload.lang;
   if (lang === "react") {
     return {
@@ -145,6 +147,24 @@ function buildFiles(payload: PreviewPayload): { template: "react" | "static"; fi
         "/App.js": { code: payload.code },
         "/index.js": { code: REACT_INDEX, hidden: true },
         "/styles.css": { code: REACT_STYLES, hidden: true },
+      },
+    };
+  }
+  if (lang === "react-ts") {
+    return {
+      template: "react-ts",
+      files: {
+        "/App.tsx": { code: payload.code },
+        "/index.tsx": { code: REACT_INDEX.replace('"./App"', '"./App"'), hidden: true },
+        "/styles.css": { code: REACT_STYLES, hidden: true },
+      },
+    };
+  }
+  if (lang === "vanilla-ts") {
+    return {
+      template: "vanilla-ts",
+      files: {
+        "/src/index.ts": { code: payload.code + "\n// Output logged to console.\n" },
       },
     };
   }
