@@ -562,7 +562,7 @@ function ChatWorkspaceInner() {
       <main className="relative flex h-full flex-1 flex-col">
         {/* Header */}
         <header className="relative z-10 flex items-center gap-3 border-b border-slate-200/70 px-4 py-3 sm:px-6" style={{
-          background: "linear-gradient(180deg, rgba(14,12,22,0.72) 0%, rgba(10,10,18,0.4) 100%)",
+          background: "linear-gradient(180deg, rgba(255,255,255,0.75) 0%, rgba(255,255,255,0.35) 100%)",
           backdropFilter: "blur(10px)",
         }}>
 
