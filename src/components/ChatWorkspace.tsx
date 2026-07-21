@@ -528,6 +528,34 @@ function ChatWorkspaceInner() {
             </button>
           </div>
         </div>
+
+        {/* Developer credit */}
+        <div className="border-t border-white/[0.06] px-4 py-3">
+          <div
+            className="relative overflow-hidden rounded-xl px-3 py-2.5 text-center"
+            style={{
+              background: "linear-gradient(90deg, rgba(255,45,149,0.10), rgba(0,200,255,0.10), rgba(122,92,255,0.10))",
+              border: "1px solid rgba(255,255,255,0.06)",
+            }}
+          >
+            <div
+              aria-hidden
+              className="absolute inset-0 opacity-40"
+              style={{
+                background: "linear-gradient(90deg, #ff2d95, #ffd400, #2dff88, #00c8ff, #7a5cff, #ff2d95)",
+                backgroundSize: "300% 100%",
+                animation: "rgb-flow 6s linear infinite",
+                filter: "blur(22px)",
+              }}
+            />
+            <div className="relative text-[10px] uppercase tracking-[0.24em] text-neutral-500">
+              Crafted with care
+            </div>
+            <div className="relative mt-0.5 text-[13px] font-semibold">
+              Developed by <span className="rgb-text">Sam</span>
+            </div>
+          </div>
+        </div>
       </aside>
 
       {/* Main */}
