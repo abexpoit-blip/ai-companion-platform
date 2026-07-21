@@ -1,4 +1,4 @@
-import { lazy, Suspense, useMemo, useState } from "react";
+import { lazy, Suspense, useState } from "react";
 import { X, Code2, Eye, Terminal, RefreshCw } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { usePreview, type PreviewPayload } from "./preview-context";
@@ -104,4 +104,3 @@ function LoadingSkeleton() {
 }
 
 export type { PreviewPayload };
-export { useMemo };
