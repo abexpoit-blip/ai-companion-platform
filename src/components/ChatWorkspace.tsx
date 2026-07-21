@@ -1108,15 +1108,15 @@ function EmptyState({ onPick, model }: { onPick: (q: string) => void; model: AIM
                 <span className="text-[9.5px] font-semibold uppercase tracking-[0.2em] text-slate-500">{b.eyebrow}</span>
               </div>
 
-              <div className={cn("relative", b.large ? "mt-auto pt-8" : "mt-4")}>
-                <h3 className={cn("font-display font-bold text-slate-900", b.large ? "text-2xl sm:text-3xl" : "text-lg")}>
+              <div className={cn("relative flex-1", b.large ? "mt-5 flex flex-col justify-end" : "mt-4")}>
+                <h3 className={cn("font-display font-bold text-slate-900", b.large ? "text-2xl sm:text-[28px]" : "text-lg")}>
                   {b.title}
                 </h3>
-                <p className={cn("mt-2 leading-relaxed text-slate-500", b.large ? "text-[13.5px] max-w-sm" : "text-[12px]")}>
+                <p className={cn("mt-2 leading-relaxed text-slate-600", b.large ? "text-[13.5px] max-w-sm" : "text-[12px]")}>
                   {b.body}
                 </p>
                 {(b.large || b.cta) && (
-                  <div className="mt-4 inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-widest text-slate-700 transition group-hover:text-slate-900">
+                  <div className="mt-4 inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-widest text-[color:var(--color-iris-ink)] transition group-hover:text-[color:var(--color-iris-deep)]">
                     Compose
                     <ChevronRight className="h-3.5 w-3.5 transition group-hover:translate-x-0.5" />
                   </div>
