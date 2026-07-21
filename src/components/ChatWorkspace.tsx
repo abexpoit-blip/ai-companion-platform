@@ -5,35 +5,44 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import {
   Plus,
-  MessageSquare,
   Settings,
   LogOut,
-  Send,
+  ArrowUp,
   Paperclip,
   PanelLeftClose,
   PanelLeft,
-  Sparkles,
   Trash2,
   Pencil,
   Check,
   X,
   Copy,
   Menu,
-  User,
+  Search,
+  ChevronDown,
+  Command,
+  Zap,
+  Shield,
+  Sparkle,
+  Diamond,
+  Mic,
+  Image as ImageIcon,
+  ChevronRight,
+  Crown,
 } from "lucide-react";
 import {
   sendChatMessage,
+  AI_MODELS,
   type ChatMessage,
   type ChatThread,
+  type AIModel,
 } from "@/lib/chat-api";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 
-
 const uid = () => Math.random().toString(36).slice(2, 10);
-const STORAGE_KEY = "codeaxis.chat.v1";
+const STORAGE_KEY = "codeaxis.chat.v2";
 
-type Persisted = { threads: ChatThread[]; activeId: string };
+type Persisted = { threads: ChatThread[]; activeId: string; modelId: string };
 
 function loadPersisted(): Persisted | null {
   if (typeof window === "undefined") return null;
@@ -48,23 +57,27 @@ function loadPersisted(): Persisted | null {
   }
 }
 
+const tierIcon = (tier: AIModel["tier"]) =>
+  tier === "Signature" ? Crown : tier === "Reserve" ? Diamond : Sparkle;
+
 export function ChatWorkspace() {
   const [hydrated, setHydrated] = useState(false);
   const [threads, setThreads] = useState<ChatThread[]>([]);
   const [activeId, setActiveId] = useState<string>("");
+  const [modelId, setModelId] = useState<string>(AI_MODELS[0].id);
+  const [modelOpen, setModelOpen] = useState(false);
   const isMobile = useIsMobile();
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  useEffect(() => {
-    setSidebarOpen(!isMobile);
-  }, [isMobile]);
+  const [query, setQuery] = useState("");
+  useEffect(() => setSidebarOpen(!isMobile), [isMobile]);
 
   const [input, setInput] = useState("");
   const [isSending, setIsSending] = useState(false);
   const [renamingId, setRenamingId] = useState<string | null>(null);
   const [renameDraft, setRenameDraft] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
+  const taRef = useRef<HTMLTextAreaElement>(null);
 
-  // Hydrate from localStorage on mount (client-only)
   useEffect(() => {
     const persisted = loadPersisted();
     if (persisted && persisted.threads.length > 0) {
@@ -74,42 +87,57 @@ export function ChatWorkspace() {
           ? persisted.activeId
           : persisted.threads[0].id,
       );
+      if (persisted.modelId) setModelId(persisted.modelId);
     } else {
-      const first: ChatThread = { id: uid(), title: "New chat", messages: [], updatedAt: Date.now() };
+      const first: ChatThread = { id: uid(), title: "Untitled dossier", messages: [], updatedAt: Date.now() };
       setThreads([first]);
       setActiveId(first.id);
     }
     setHydrated(true);
   }, []);
 
-  // Persist on any change (after hydration)
   useEffect(() => {
     if (!hydrated) return;
     try {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify({ threads, activeId }));
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify({ threads, activeId, modelId }));
     } catch {
-      /* quota or private mode */
+      /* ignore */
     }
-  }, [threads, activeId, hydrated]);
+  }, [threads, activeId, modelId, hydrated]);
 
   const active = useMemo(
     () => threads.find((t) => t.id === activeId) ?? threads[0],
     [threads, activeId],
   );
+  const model = useMemo(
+    () => AI_MODELS.find((m) => m.id === modelId) ?? AI_MODELS[0],
+    [modelId],
+  );
 
-  // Auto-scroll to bottom on new messages / typing
+  const filtered = useMemo(() => {
+    if (!query.trim()) return threads;
+    const q = query.toLowerCase();
+    return threads.filter((t) => t.title.toLowerCase().includes(q));
+  }, [threads, query]);
+
   useEffect(() => {
     const el = scrollRef.current;
     if (el) el.scrollTop = el.scrollHeight;
   }, [active?.messages.length, isSending]);
 
+  useEffect(() => {
+    const ta = taRef.current;
+    if (!ta) return;
+    ta.style.height = "auto";
+    ta.style.height = Math.min(ta.scrollHeight, 200) + "px";
+  }, [input]);
+
   const newChat = () => {
-    // If current active is already an empty "New chat", just focus it.
     if (active && active.messages.length === 0) {
       setInput("");
       return;
     }
-    const t: ChatThread = { id: uid(), title: "New chat", messages: [], updatedAt: Date.now() };
+    const t: ChatThread = { id: uid(), title: "Untitled dossier", messages: [], updatedAt: Date.now() };
     setThreads((prev) => [t, ...prev]);
     setActiveId(t.id);
     setInput("");
@@ -119,7 +147,7 @@ export function ChatWorkspace() {
     setThreads((prev) => {
       const next = prev.filter((t) => t.id !== id);
       if (next.length === 0) {
-        const fresh: ChatThread = { id: uid(), title: "New chat", messages: [], updatedAt: Date.now() };
+        const fresh: ChatThread = { id: uid(), title: "Untitled dossier", messages: [], updatedAt: Date.now() };
         setActiveId(fresh.id);
         return [fresh];
       }
@@ -157,18 +185,21 @@ export function ChatWorkspace() {
     const isFirst = active.messages.length === 0;
     updateThread(active.id, (t) => ({
       ...t,
-      title: isFirst ? text.slice(0, 40) : t.title,
+      title: isFirst ? text.slice(0, 48) : t.title,
       messages: [...t.messages, userMsg],
       updatedAt: Date.now(),
     }));
     setInput("");
     setIsSending(true);
     try {
-      const reply = await sendChatMessage([...(active.messages ?? []), userMsg]);
+      const reply = await sendChatMessage([...(active.messages ?? []), userMsg], modelId);
       const asstMsg: ChatMessage = {
         id: uid(),
         role: "assistant",
-        content: reply,
+        content: reply.content,
+        model: reply.model,
+        tokens: reply.tokens,
+        latencyMs: reply.latencyMs,
         createdAt: Date.now(),
       };
       updateThread(active.id, (t) => ({
@@ -188,13 +219,20 @@ export function ChatWorkspace() {
     }
   };
 
+  const totalTokens = active?.messages.reduce((s, m) => s + (m.tokens ?? Math.round(m.content.length / 3.6)), 0) ?? 0;
+
   return (
-    <div className="dark relative flex h-screen w-full overflow-hidden bg-[#0b0d12] text-slate-100">
+    <div className="dark relative flex h-screen w-full overflow-hidden text-neutral-100" style={{
+      background: "radial-gradient(120% 80% at 15% 0%, oklch(0.16 0.02 80 / 0.35), transparent 60%), radial-gradient(90% 70% at 100% 100%, oklch(0.14 0.03 260 / 0.35), transparent 55%), #060606",
+    }}>
+      {/* Grain overlay */}
+      <div className="pointer-events-none absolute inset-0 grain" aria-hidden />
+
       {/* Mobile backdrop */}
       {isMobile && sidebarOpen && (
         <div
           onClick={() => setSidebarOpen(false)}
-          className="fixed inset-0 z-30 bg-black/60 backdrop-blur-sm md:hidden"
+          className="fixed inset-0 z-30 bg-black/70 backdrop-blur-sm md:hidden"
           aria-hidden
         />
       )}
@@ -202,46 +240,92 @@ export function ChatWorkspace() {
       {/* Sidebar */}
       <aside
         className={cn(
-          "flex h-full w-72 shrink-0 flex-col border-r border-white/5 bg-[#0f1219] transition-transform duration-300",
+          "flex h-full w-[300px] shrink-0 flex-col border-r border-white/[0.06] transition-transform duration-300",
           "fixed inset-y-0 left-0 z-40 md:relative md:translate-x-0",
           sidebarOpen ? "translate-x-0" : "-translate-x-full md:w-0 md:-translate-x-0 md:overflow-hidden md:border-0",
         )}
+        style={{
+          background: "linear-gradient(180deg, rgba(20,17,12,0.9) 0%, rgba(10,10,12,0.92) 100%)",
+          backdropFilter: "blur(14px)",
+        }}
       >
-
-        <div className="flex items-center gap-2 px-4 pt-4 pb-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600">
-            <Sparkles className="h-4 w-4 text-white" />
+        {/* Brand */}
+        <div className="flex items-center gap-3 px-5 pt-5 pb-4">
+          <div className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-[color:var(--color-gold)]/40" style={{
+            background: "linear-gradient(135deg, oklch(0.28 0.05 80), oklch(0.14 0.02 60))",
+            boxShadow: "inset 0 1px 0 rgba(255,220,150,0.25), 0 8px 24px -12px rgba(200,160,80,0.6)",
+          }}>
+            <span className="font-display text-lg leading-none gold-text">C</span>
+            <span className="absolute -bottom-1 -right-1 h-2 w-2 rounded-full bg-[color:var(--color-gold)] shadow-[0_0_10px_rgba(220,180,90,0.9)]" />
           </div>
-          <div className="text-sm font-semibold tracking-tight">CodeAxis Studio AI</div>
+          <div className="min-w-0">
+            <div className="font-display text-[17px] leading-tight tracking-tight">
+              CodeAxis <span className="gold-text">Studio</span>
+            </div>
+            <div className="text-[10px] uppercase tracking-[0.18em] text-neutral-500">Private Intelligence</div>
+          </div>
         </div>
 
-        <div className="px-3 pb-3">
+        {/* New chat */}
+        <div className="px-4 pb-3">
           <button
             onClick={newChat}
-            className="flex w-full items-center justify-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm font-medium text-slate-100 transition hover:bg-white/10"
+            className="group relative flex w-full items-center justify-between overflow-hidden rounded-xl border border-[color:var(--color-gold)]/25 px-3.5 py-2.5 text-sm text-neutral-100 transition hover:border-[color:var(--color-gold)]/55"
+            style={{ background: "linear-gradient(135deg, rgba(60,45,20,0.5), rgba(20,15,10,0.4))" }}
           >
-            <Plus className="h-4 w-4" />
-            New Chat
+            <span className="flex items-center gap-2">
+              <Plus className="h-4 w-4 text-[color:var(--color-gold)]" />
+              <span className="font-medium tracking-tight">New Dossier</span>
+            </span>
+            <kbd className="rounded-md border border-white/10 bg-black/40 px-1.5 py-0.5 text-[10px] font-mono text-neutral-400">⌘N</kbd>
+            <span className="pointer-events-none absolute inset-0 opacity-0 transition group-hover:opacity-100" style={{
+              background: "linear-gradient(120deg, transparent 30%, rgba(220,180,90,0.08) 50%, transparent 70%)",
+            }} />
           </button>
         </div>
 
-        <div className="px-4 pb-2 text-[11px] font-medium uppercase tracking-wider text-slate-500">
-          Recent
+        {/* Search */}
+        <div className="px-4 pb-3">
+          <div className="flex items-center gap-2 rounded-lg border border-white/[0.06] bg-black/30 px-2.5 py-1.5">
+            <Search className="h-3.5 w-3.5 text-neutral-500" />
+            <input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search dossiers"
+              className="flex-1 bg-transparent text-xs text-neutral-200 placeholder:text-neutral-500 focus:outline-none"
+            />
+            <kbd className="rounded border border-white/10 bg-black/40 px-1 py-0.5 text-[9px] font-mono text-neutral-500">⌘K</kbd>
+          </div>
         </div>
-        <div className="flex-1 overflow-y-auto px-2">
-          {threads.map((t) => {
+
+        <div className="mx-5 my-1 h-px bg-gradient-to-r from-transparent via-[color:var(--color-gold)]/25 to-transparent" />
+
+        <div className="flex items-center justify-between px-5 pt-3 pb-2">
+          <span className="text-[10px] font-medium uppercase tracking-[0.2em] text-neutral-500">Archive</span>
+          <span className="text-[10px] text-neutral-600">{filtered.length}</span>
+        </div>
+
+        <div className="flex-1 overflow-y-auto px-2 pb-2">
+          {filtered.map((t) => {
             const isRenaming = renamingId === t.id;
+            const isActive = t.id === activeId;
             return (
               <div
                 key={t.id}
                 className={cn(
-                  "group mb-0.5 flex items-center gap-1 rounded-md px-2 py-2 text-sm transition",
-                  t.id === activeId
-                    ? "bg-white/10 text-white"
-                    : "text-slate-300 hover:bg-white/5",
+                  "group relative mb-1 flex items-center gap-2 rounded-lg px-2.5 py-2 text-[13px] transition",
+                  isActive
+                    ? "border border-[color:var(--color-gold)]/25 text-white"
+                    : "border border-transparent text-neutral-300 hover:bg-white/[0.04]",
                 )}
+                style={isActive ? {
+                  background: "linear-gradient(135deg, rgba(60,45,20,0.35), rgba(20,15,10,0.2))",
+                  boxShadow: "inset 0 1px 0 rgba(255,220,150,0.08)",
+                } : undefined}
               >
-                <MessageSquare className="h-4 w-4 shrink-0 text-slate-400" />
+                {isActive && (
+                  <span className="absolute left-0 top-1/2 h-5 w-[2px] -translate-y-1/2 rounded-r bg-[color:var(--color-gold)] shadow-[0_0_8px_rgba(220,180,90,0.7)]" />
+                )}
                 {isRenaming ? (
                   <>
                     <input
@@ -252,14 +336,10 @@ export function ChatWorkspace() {
                         if (e.key === "Enter") commitRename();
                         if (e.key === "Escape") cancelRename();
                       }}
-                      className="flex-1 rounded bg-black/30 px-1.5 py-0.5 text-sm text-white outline-none ring-1 ring-indigo-500/50"
+                      className="flex-1 rounded bg-black/40 px-1.5 py-0.5 text-[13px] text-white outline-none ring-1 ring-[color:var(--color-gold)]/40"
                     />
-                    <button onClick={commitRename} aria-label="Save" className="p-1 text-emerald-400 hover:text-emerald-300">
-                      <Check className="h-3.5 w-3.5" />
-                    </button>
-                    <button onClick={cancelRename} aria-label="Cancel" className="p-1 text-slate-400 hover:text-white">
-                      <X className="h-3.5 w-3.5" />
-                    </button>
+                    <button onClick={commitRename} className="p-1 text-[color:var(--color-gold)]"><Check className="h-3.5 w-3.5" /></button>
+                    <button onClick={cancelRename} className="p-1 text-neutral-400"><X className="h-3.5 w-3.5" /></button>
                   </>
                 ) : (
                   <>
@@ -268,27 +348,24 @@ export function ChatWorkspace() {
                         setActiveId(t.id);
                         if (isMobile) setSidebarOpen(false);
                       }}
-
                       onDoubleClick={() => startRename(t)}
-                      className="flex-1 truncate text-left"
-                      title="Click to open · Double-click to rename"
+                      className="min-w-0 flex-1 text-left"
                     >
-                      {t.title}
+                      <div className="truncate">{t.title}</div>
+                      <div className="mt-0.5 flex items-center gap-1.5 text-[10px] text-neutral-500">
+                        <span>{new Date(t.updatedAt).toLocaleDateString(undefined, { month: "short", day: "numeric" })}</span>
+                        <span className="text-neutral-700">·</span>
+                        <span>{t.messages.length} turns</span>
+                      </div>
                     </button>
-                    <button
-                      onClick={() => startRename(t)}
-                      className="opacity-0 transition group-hover:opacity-100"
-                      aria-label="Rename chat"
-                    >
-                      <Pencil className="h-3.5 w-3.5 text-slate-400 hover:text-indigo-300" />
-                    </button>
-                    <button
-                      onClick={() => deleteThread(t.id)}
-                      className="opacity-0 transition group-hover:opacity-100"
-                      aria-label="Delete chat"
-                    >
-                      <Trash2 className="h-3.5 w-3.5 text-slate-400 hover:text-red-400" />
-                    </button>
+                    <div className="flex items-center opacity-0 transition group-hover:opacity-100">
+                      <button onClick={() => startRename(t)} className="p-1 text-neutral-400 hover:text-[color:var(--color-gold)]" aria-label="Rename">
+                        <Pencil className="h-3.5 w-3.5" />
+                      </button>
+                      <button onClick={() => deleteThread(t.id)} className="p-1 text-neutral-400 hover:text-red-400" aria-label="Delete">
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
                   </>
                 )}
               </div>
@@ -296,90 +373,196 @@ export function ChatWorkspace() {
           })}
         </div>
 
-
         {/* User */}
-        <div className="mt-2 border-t border-white/5 p-3">
-          <div className="flex items-center gap-3 rounded-lg p-2 hover:bg-white/5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-violet-600">
-              <User className="h-4 w-4 text-white" />
+        <div className="border-t border-white/[0.06] p-3">
+          <div className="flex items-center gap-3 rounded-xl border border-white/[0.05] bg-black/30 p-2.5">
+            <div className="relative flex h-10 w-10 items-center justify-center rounded-full border border-[color:var(--color-gold)]/30" style={{
+              background: "linear-gradient(135deg, oklch(0.32 0.06 80), oklch(0.16 0.03 60))",
+            }}>
+              <span className="font-display text-base gold-text">A</span>
+              <span className="absolute -bottom-0.5 -right-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-black">
+                <Crown className="h-2 w-2 text-[color:var(--color-gold)]" />
+              </span>
             </div>
             <div className="min-w-0 flex-1">
-              <div className="truncate text-sm font-medium">Alex Morgan</div>
-              <div className="truncate text-xs text-slate-500">alex@codeaxis.io</div>
+              <div className="flex items-center gap-1.5">
+                <div className="truncate text-[13px] font-medium">Alex Morgan</div>
+              </div>
+              <div className="flex items-center gap-1.5 text-[10px]">
+                <span className="rounded-sm bg-[color:var(--color-gold)]/15 px-1 py-px font-medium text-[color:var(--color-gold)]">SIGNATURE</span>
+                <span className="text-neutral-500">alex@codeaxis.io</span>
+              </div>
             </div>
-            <button
-              className="rounded-md p-1.5 text-slate-400 hover:bg-white/10 hover:text-white"
-              aria-label="Settings"
-            >
-              <Settings className="h-4 w-4" />
+            <button className="rounded-md p-1.5 text-neutral-400 hover:bg-white/5 hover:text-white" aria-label="Settings">
+              <Settings className="h-3.5 w-3.5" />
             </button>
-            <button
-              className="rounded-md p-1.5 text-slate-400 hover:bg-white/10 hover:text-white"
-              aria-label="Log out"
-            >
-              <LogOut className="h-4 w-4" />
+            <button className="rounded-md p-1.5 text-neutral-400 hover:bg-white/5 hover:text-white" aria-label="Log out">
+              <LogOut className="h-3.5 w-3.5" />
             </button>
           </div>
         </div>
       </aside>
 
       {/* Main */}
-      <main className="flex h-full flex-1 flex-col">
-        <header className="flex items-center gap-2 border-b border-white/5 px-4 py-3">
+      <main className="relative flex h-full flex-1 flex-col">
+        {/* Header */}
+        <header className="relative z-10 flex items-center gap-3 border-b border-white/[0.06] px-4 py-3 sm:px-6" style={{
+          background: "linear-gradient(180deg, rgba(15,13,10,0.72) 0%, rgba(10,10,12,0.4) 100%)",
+          backdropFilter: "blur(10px)",
+        }}>
           <button
             onClick={() => setSidebarOpen((v) => !v)}
-            className="rounded-md p-1.5 text-slate-400 hover:bg-white/10 hover:text-white"
+            className="rounded-md p-1.5 text-neutral-400 hover:bg-white/5 hover:text-white"
             aria-label="Toggle sidebar"
           >
             {isMobile ? <Menu className="h-4 w-4" /> : sidebarOpen ? <PanelLeftClose className="h-4 w-4" /> : <PanelLeft className="h-4 w-4" />}
           </button>
-          <div className="truncate text-sm font-medium">{active?.title ?? "New chat"}</div>
-          <div className="ml-auto text-xs text-slate-500">Mock model · Ollama-ready</div>
+
+          {/* Model selector */}
+          <div className="relative">
+            <button
+              onClick={() => setModelOpen((v) => !v)}
+              className="flex items-center gap-2.5 rounded-xl border border-white/[0.08] bg-black/30 py-1.5 pl-2 pr-3 text-left transition hover:border-[color:var(--color-gold)]/40"
+            >
+              <span className="flex h-7 w-7 items-center justify-center rounded-lg border border-[color:var(--color-gold)]/30 bg-black/40">
+                {(() => { const I = tierIcon(model.tier); return <I className="h-3.5 w-3.5 text-[color:var(--color-gold)]" />; })()}
+              </span>
+              <span className="flex flex-col leading-tight">
+                <span className="text-[12px] text-neutral-400">
+                  <span className="text-[color:var(--color-gold)]">{model.tier}</span> · Model
+                </span>
+                <span className="text-[13px] font-medium text-white">{model.name}</span>
+              </span>
+              <ChevronDown className={cn("h-3.5 w-3.5 text-neutral-400 transition", modelOpen && "rotate-180")} />
+            </button>
+            {modelOpen && (
+              <>
+                <div className="fixed inset-0 z-40" onClick={() => setModelOpen(false)} />
+                <div className="absolute left-0 top-[calc(100%+8px)] z-50 w-[360px] overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0b0908] p-2 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.9)]" style={{
+                  backgroundImage: "linear-gradient(180deg, rgba(30,22,10,0.4), rgba(10,10,12,0.6))",
+                }}>
+                  <div className="flex items-center justify-between px-2 py-1.5">
+                    <span className="text-[10px] uppercase tracking-[0.2em] text-neutral-500">Select Intelligence</span>
+                    <span className="text-[10px] text-neutral-600">4 available</span>
+                  </div>
+                  {AI_MODELS.map((m) => {
+                    const I = tierIcon(m.tier);
+                    const active = m.id === modelId;
+                    return (
+                      <button
+                        key={m.id}
+                        onClick={() => { setModelId(m.id); setModelOpen(false); }}
+                        className={cn(
+                          "group flex w-full items-start gap-3 rounded-xl p-2.5 text-left transition",
+                          active ? "bg-[color:var(--color-gold)]/10" : "hover:bg-white/[0.04]",
+                        )}
+                      >
+                        <span className="mt-0.5 flex h-9 w-9 items-center justify-center rounded-lg border border-[color:var(--color-gold)]/25 bg-black/40">
+                          <I className="h-4 w-4 text-[color:var(--color-gold)]" />
+                        </span>
+                        <span className="min-w-0 flex-1">
+                          <span className="flex items-center gap-1.5">
+                            <span className="text-[13px] font-medium text-white">{m.name}</span>
+                            {m.badge && (
+                              <span className="rounded-sm bg-[color:var(--color-gold)]/15 px-1 py-px text-[9px] font-medium uppercase tracking-wider text-[color:var(--color-gold)]">{m.badge}</span>
+                            )}
+                          </span>
+                          <span className="mt-0.5 block truncate text-[11px] text-neutral-400">{m.tagline}</span>
+                          <span className="mt-1 flex items-center gap-2 text-[10px] text-neutral-500">
+                            <span className="font-mono">{m.context}</span>
+                            <span className="text-neutral-700">·</span>
+                            <span className="font-mono">{m.price}</span>
+                          </span>
+                        </span>
+                        {active && <Check className="mt-2 h-3.5 w-3.5 text-[color:var(--color-gold)]" />}
+                      </button>
+                    );
+                  })}
+                </div>
+              </>
+            )}
+          </div>
+
+          <div className="ml-auto flex items-center gap-2 text-[11px] text-neutral-400">
+            <span className="hidden items-center gap-1 rounded-md border border-white/[0.06] bg-black/30 px-2 py-1 sm:flex">
+              <Shield className="h-3 w-3 text-emerald-400" />
+              <span>End-to-end encrypted</span>
+            </span>
+            <span className="hidden items-center gap-1 rounded-md border border-white/[0.06] bg-black/30 px-2 py-1 font-mono md:flex">
+              <Zap className="h-3 w-3 text-[color:var(--color-gold)]" />
+              <span>{totalTokens.toLocaleString()} tok</span>
+            </span>
+          </div>
         </header>
 
         {/* Messages */}
-        <div ref={scrollRef} className="flex-1 overflow-y-auto">
+        <div ref={scrollRef} className="relative flex-1 overflow-y-auto">
           {active && active.messages.length === 0 ? (
-            <EmptyState onPick={(q) => setInput(q)} />
+            <EmptyState onPick={(q) => setInput(q)} model={model} />
           ) : (
-            <div className="mx-auto flex max-w-3xl flex-col gap-6 px-4 py-8">
+            <div className="mx-auto flex max-w-3xl flex-col gap-8 px-4 py-10 sm:px-6">
               {active?.messages.map((m) => (
                 <MessageBubble key={m.id} message={m} />
               ))}
-              {isSending && <TypingIndicator />}
+              {isSending && <TypingIndicator model={model} />}
             </div>
           )}
         </div>
 
         {/* Composer */}
-        <div className="sticky bottom-0 border-t border-white/5 bg-[#0b0d12]/80 backdrop-blur">
-          <div className="mx-auto max-w-3xl px-4 py-4">
-            <div className="flex items-end gap-2 rounded-2xl border border-white/10 bg-[#141824] p-2 shadow-lg focus-within:border-indigo-500/50">
-              <button
-                className="rounded-lg p-2 text-slate-400 hover:bg-white/5 hover:text-white"
-                aria-label="Attach file"
-              >
-                <Paperclip className="h-4 w-4" />
-              </button>
+        <div className="relative border-t border-white/[0.06]" style={{
+          background: "linear-gradient(0deg, rgba(10,10,12,0.85) 60%, rgba(10,10,12,0.4) 100%)",
+          backdropFilter: "blur(10px)",
+        }}>
+          <div className="mx-auto max-w-3xl px-4 py-4 sm:px-6">
+            <div
+              className="group relative rounded-2xl border border-white/[0.08] p-2 transition focus-within:border-[color:var(--color-gold)]/40"
+              style={{
+                background: "linear-gradient(180deg, rgba(20,17,12,0.7), rgba(10,10,12,0.7))",
+                boxShadow: "0 20px 60px -20px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,220,150,0.05)",
+              }}
+            >
               <textarea
+                ref={taRef}
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={onKeyDown}
                 rows={1}
-                placeholder="Message CodeAxis Studio AI…"
-                className="max-h-40 flex-1 resize-none bg-transparent px-1 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none"
+                placeholder="Compose a query for Axis Intelligence…"
+                className="max-h-52 w-full resize-none bg-transparent px-3 pt-2.5 pb-1 text-[14px] leading-relaxed text-neutral-100 placeholder:text-neutral-500 focus:outline-none"
               />
-              <button
-                onClick={() => void handleSend()}
-                disabled={!input.trim() || isSending}
-                className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 text-white shadow transition hover:opacity-90 disabled:opacity-40"
-                aria-label="Send"
-              >
-                <Send className="h-4 w-4" />
-              </button>
+              <div className="flex items-center justify-between px-1.5 pb-1 pt-1.5">
+                <div className="flex items-center gap-0.5">
+                  <ComposerBtn label="Attach"><Paperclip className="h-4 w-4" /></ComposerBtn>
+                  <ComposerBtn label="Image"><ImageIcon className="h-4 w-4" /></ComposerBtn>
+                  <ComposerBtn label="Voice"><Mic className="h-4 w-4" /></ComposerBtn>
+                  <ComposerBtn label="Commands"><Command className="h-4 w-4" /></ComposerBtn>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="hidden text-[10px] text-neutral-500 sm:inline">
+                    <kbd className="rounded border border-white/10 bg-black/40 px-1 py-0.5 font-mono">⏎</kbd> send
+                    <span className="mx-1 text-neutral-700">·</span>
+                    <kbd className="rounded border border-white/10 bg-black/40 px-1 py-0.5 font-mono">⇧⏎</kbd> newline
+                  </span>
+                  <button
+                    onClick={() => void handleSend()}
+                    disabled={!input.trim() || isSending}
+                    aria-label="Send"
+                    className="relative inline-flex h-9 w-9 items-center justify-center overflow-hidden rounded-xl text-black transition disabled:opacity-30 disabled:saturate-50"
+                    style={{
+                      background: "linear-gradient(135deg, oklch(0.94 0.08 88), oklch(0.72 0.14 74))",
+                      boxShadow: "0 8px 24px -8px rgba(220,180,90,0.6), inset 0 1px 0 rgba(255,255,255,0.4)",
+                    }}
+                  >
+                    <ArrowUp className="h-4 w-4" strokeWidth={2.5} />
+                  </button>
+                </div>
+              </div>
             </div>
-            <div className="mt-2 text-center text-[11px] text-slate-500">
-              CodeAxis Studio AI can make mistakes. Verify important info.
+            <div className="mt-2.5 flex items-center justify-center gap-2 text-[10.5px] text-neutral-500">
+              <span>Powered by <span className="text-[color:var(--color-gold)]">{model.name}</span></span>
+              <span className="text-neutral-700">·</span>
+              <span>Verify critical outputs. CodeAxis is an assistant, not an oracle.</span>
             </div>
           </div>
         </div>
@@ -388,9 +571,20 @@ export function ChatWorkspace() {
   );
 }
 
+function ComposerBtn({ children, label }: { children: React.ReactNode; label: string }) {
+  return (
+    <button
+      aria-label={label}
+      className="rounded-lg p-2 text-neutral-400 transition hover:bg-white/5 hover:text-[color:var(--color-gold)]"
+    >
+      {children}
+    </button>
+  );
+}
+
 const markdownComponents: Components = {
   code(props) {
-    const { className, children, node, ...rest } = props as ComponentPropsWithoutRef<"code"> & {
+    const { className, children, ...rest } = props as ComponentPropsWithoutRef<"code"> & {
       node?: unknown;
       inline?: boolean;
     };
@@ -401,7 +595,7 @@ const markdownComponents: Components = {
       return (
         <code
           {...rest}
-          className="rounded bg-white/10 px-1.5 py-0.5 font-mono text-[0.85em] text-indigo-300"
+          className="rounded bg-[color:var(--color-gold)]/10 px-1.5 py-0.5 font-mono text-[0.85em] text-[color:var(--color-gold)]"
         >
           {children}
         </code>
@@ -409,26 +603,23 @@ const markdownComponents: Components = {
     }
     return <CodeBlock language={match?.[1] ?? "text"} value={raw} />;
   },
-  pre({ children }) {
-    // Let <code> render its own <pre> via SyntaxHighlighter
-    return <>{children}</>;
-  },
+  pre({ children }) { return <>{children}</>; },
   table({ children }) {
     return (
-      <div className="my-3 overflow-x-auto rounded-lg border border-white/10">
+      <div className="my-4 overflow-x-auto rounded-xl border border-white/[0.08]">
         <table className="w-full border-collapse text-sm">{children}</table>
       </div>
     );
   },
   th({ children }) {
-    return <th className="border-b border-white/10 bg-white/5 px-3 py-2 text-left font-semibold">{children}</th>;
+    return <th className="border-b border-white/[0.08] bg-[color:var(--color-gold)]/[0.06] px-3 py-2 text-left font-medium uppercase tracking-wider text-[11px] text-[color:var(--color-gold-soft)]">{children}</th>;
   },
   td({ children }) {
-    return <td className="border-b border-white/5 px-3 py-2 align-top">{children}</td>;
+    return <td className="border-b border-white/[0.05] px-3 py-2 align-top">{children}</td>;
   },
   a({ children, href }) {
     return (
-      <a href={href} target="_blank" rel="noreferrer" className="text-indigo-300 underline underline-offset-2 hover:text-indigo-200">
+      <a href={href} target="_blank" rel="noreferrer" className="text-[color:var(--color-gold)] underline decoration-[color:var(--color-gold)]/30 underline-offset-4 hover:decoration-[color:var(--color-gold)]">
         {children}
       </a>
     );
@@ -442,21 +633,29 @@ function CodeBlock({ language, value }: { language: string; value: string }) {
       await navigator.clipboard.writeText(value);
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
-    } catch {
-      /* ignore */
-    }
+    } catch {/* ignore */}
   };
   return (
-    <div className="group relative my-3 overflow-hidden rounded-lg border border-white/10 bg-[#0b0d12]">
-      <div className="flex items-center justify-between border-b border-white/5 bg-white/[0.03] px-3 py-1.5">
-        <span className="font-mono text-[11px] uppercase tracking-wider text-slate-400">{language}</span>
+    <div className="group relative my-4 overflow-hidden rounded-xl border border-white/[0.08]" style={{
+      background: "linear-gradient(180deg, #0a0908 0%, #0d0b09 100%)",
+      boxShadow: "inset 0 1px 0 rgba(255,220,150,0.04)",
+    }}>
+      <div className="flex items-center justify-between border-b border-white/[0.06] bg-black/40 px-3 py-1.5">
+        <div className="flex items-center gap-2">
+          <span className="flex gap-1">
+            <span className="h-2 w-2 rounded-full bg-white/10" />
+            <span className="h-2 w-2 rounded-full bg-white/10" />
+            <span className="h-2 w-2 rounded-full bg-[color:var(--color-gold)]/40" />
+          </span>
+          <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-neutral-500">{language}</span>
+        </div>
         <button
           onClick={onCopy}
-          className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-[11px] text-slate-300 hover:bg-white/10 hover:text-white"
+          className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-[10.5px] text-neutral-400 hover:bg-white/5 hover:text-[color:var(--color-gold)]"
           aria-label="Copy code"
         >
-          {copied ? <Check className="h-3 w-3 text-emerald-400" /> : <Copy className="h-3 w-3" />}
-          {copied ? "Copied" : "Copy"}
+          {copied ? <Check className="h-3 w-3 text-[color:var(--color-gold)]" /> : <Copy className="h-3 w-3" />}
+          <span className="uppercase tracking-wider">{copied ? "Copied" : "Copy"}</span>
         </button>
       </div>
       <SyntaxHighlighter
@@ -466,11 +665,11 @@ function CodeBlock({ language, value }: { language: string; value: string }) {
         customStyle={{
           margin: 0,
           background: "transparent",
-          padding: "12px 14px",
+          padding: "14px 16px",
           fontSize: "12.5px",
-          lineHeight: "1.55",
+          lineHeight: "1.6",
         }}
-        codeTagProps={{ style: { fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace" } }}
+        codeTagProps={{ style: { fontFamily: "JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, monospace" } }}
       >
         {value}
       </SyntaxHighlighter>
@@ -480,31 +679,64 @@ function CodeBlock({ language, value }: { language: string; value: string }) {
 
 function MessageBubble({ message }: { message: ChatMessage }) {
   const isUser = message.role === "user";
+  const time = new Date(message.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   return (
-    <div className={cn("flex gap-2 sm:gap-3", isUser ? "flex-row-reverse" : "flex-row")}>
+    <div className={cn("flex gap-3 sm:gap-4", isUser ? "flex-row-reverse" : "flex-row")}>
       <div
         className={cn(
-          "flex h-8 w-8 shrink-0 items-center justify-center rounded-full",
-          isUser ? "bg-slate-700" : "bg-gradient-to-br from-indigo-500 to-violet-600",
-        )}
-      >
-        {isUser ? <User className="h-4 w-4 text-white" /> : <Sparkles className="h-4 w-4 text-white" />}
-      </div>
-      <div
-        className={cn(
-          "min-w-0 max-w-[90%] rounded-2xl px-4 py-3 text-sm leading-relaxed sm:max-w-[85%]",
+          "flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border",
           isUser
-            ? "border border-indigo-500/20 bg-indigo-600/20 text-slate-100"
-            : "border border-white/5 bg-[#141824] text-slate-200",
+            ? "border-white/10 bg-white/[0.04]"
+            : "border-[color:var(--color-gold)]/30",
         )}
+        style={!isUser ? { background: "linear-gradient(135deg, oklch(0.28 0.05 80), oklch(0.12 0.02 60))" } : undefined}
       >
         {isUser ? (
-          <div className="whitespace-pre-wrap break-words">{message.content}</div>
+          <span className="text-xs font-medium text-neutral-300">A</span>
         ) : (
-          <div className="prose prose-invert prose-sm max-w-none break-words prose-p:my-2 prose-headings:mt-3 prose-headings:mb-2 prose-ul:my-2 prose-ol:my-2 prose-li:my-0.5 prose-strong:text-white">
-            <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
-              {message.content}
-            </ReactMarkdown>
+          <span className="font-display text-sm leading-none gold-text">C</span>
+        )}
+      </div>
+      <div className={cn("min-w-0 max-w-[92%] sm:max-w-[85%]", isUser ? "text-right" : "text-left")}>
+        <div className={cn("mb-1.5 flex items-center gap-2 text-[10px] uppercase tracking-[0.18em] text-neutral-500", isUser && "justify-end")}>
+          <span>{isUser ? "You" : "Axis"}</span>
+          {!isUser && message.model && (
+            <>
+              <span className="text-neutral-700">·</span>
+              <span className="text-[color:var(--color-gold)]/80 normal-case tracking-normal font-mono">
+                {AI_MODELS.find((m) => m.id === message.model)?.name ?? message.model}
+              </span>
+            </>
+          )}
+          <span className="text-neutral-700">·</span>
+          <span className="normal-case font-mono">{time}</span>
+        </div>
+        <div
+          className={cn(
+            "relative rounded-2xl px-4 py-3 text-[14px] leading-relaxed",
+            isUser
+              ? "inline-block border border-white/10 bg-white/[0.04] text-neutral-100"
+              : "border border-white/[0.06] text-neutral-200",
+          )}
+          style={!isUser ? {
+            background: "linear-gradient(180deg, rgba(22,18,12,0.6), rgba(12,10,8,0.6))",
+            boxShadow: "inset 0 1px 0 rgba(255,220,150,0.04)",
+          } : undefined}
+        >
+          {isUser ? (
+            <div className="whitespace-pre-wrap break-words text-left">{message.content}</div>
+          ) : (
+            <div className="prose prose-invert prose-sm max-w-none break-words prose-p:my-2 prose-headings:font-display prose-headings:tracking-tight prose-headings:mt-3 prose-headings:mb-2 prose-ul:my-2 prose-ol:my-2 prose-li:my-0.5 prose-strong:text-[color:var(--color-gold-soft)]">
+              <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
+                {message.content}
+              </ReactMarkdown>
+            </div>
+          )}
+        </div>
+        {!isUser && (message.tokens || message.latencyMs) && (
+          <div className="mt-1.5 flex items-center gap-2 text-[10px] font-mono text-neutral-600">
+            {message.latencyMs && <span>{(message.latencyMs / 1000).toFixed(2)}s</span>}
+            {message.tokens && <><span className="text-neutral-800">·</span><span>{message.tokens} tokens</span></>}
           </div>
         )}
       </div>
@@ -512,50 +744,91 @@ function MessageBubble({ message }: { message: ChatMessage }) {
   );
 }
 
-
-function TypingIndicator() {
+function TypingIndicator({ model }: { model: AIModel }) {
   return (
-    <div className="flex gap-3">
-      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-violet-600">
-        <Sparkles className="h-4 w-4 text-white" />
+    <div className="flex gap-3 sm:gap-4">
+      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-[color:var(--color-gold)]/30" style={{
+        background: "linear-gradient(135deg, oklch(0.28 0.05 80), oklch(0.12 0.02 60))",
+      }}>
+        <span className="font-display text-sm gold-text">C</span>
       </div>
-      <div className="rounded-2xl border border-white/5 bg-[#141824] px-4 py-3">
-        <div className="flex gap-1">
-          <span className="h-2 w-2 animate-bounce rounded-full bg-slate-500 [animation-delay:-0.3s]" />
-          <span className="h-2 w-2 animate-bounce rounded-full bg-slate-500 [animation-delay:-0.15s]" />
-          <span className="h-2 w-2 animate-bounce rounded-full bg-slate-500" />
+      <div className="min-w-0">
+        <div className="mb-1.5 text-[10px] uppercase tracking-[0.18em] text-neutral-500">
+          Axis · <span className="normal-case tracking-normal font-mono text-[color:var(--color-gold)]/80">{model.name}</span>
+        </div>
+        <div className="inline-flex items-center gap-2 rounded-2xl border border-white/[0.06] px-4 py-3" style={{
+          background: "linear-gradient(180deg, rgba(22,18,12,0.6), rgba(12,10,8,0.6))",
+        }}>
+          <div className="relative h-4 w-16 overflow-hidden rounded-full bg-white/[0.04]">
+            <div className="absolute inset-0 shimmer-gold" />
+          </div>
+          <span className="text-[11px] text-neutral-400">reasoning…</span>
         </div>
       </div>
     </div>
   );
 }
 
-function EmptyState({ onPick }: { onPick: (q: string) => void }) {
+function EmptyState({ onPick, model }: { onPick: (q: string) => void; model: AIModel }) {
   const suggestions = [
-    "Explain React Server Components in simple terms",
-    "Write a marketing tagline for a dev tool",
-    "Debug: why is my useEffect running twice?",
-    "Draft a SQL query to find top customers",
+    { icon: Sparkle, title: "Draft an investor memo", body: "Series B narrative with defensible metrics." },
+    { icon: Diamond, title: "Refactor a React module", body: "Reduce complexity, keep the public API stable." },
+    { icon: Crown, title: "Distill a 40-page dossier", body: "Executive summary with cited evidence." },
+    { icon: Zap, title: "Draft a SQL cohort query", body: "Top customers by revenue in the last 30 days." },
   ];
+  const TierI = tierIcon(model.tier);
   return (
-    <div className="mx-auto flex h-full max-w-2xl flex-col items-center justify-center px-4 py-16 text-center">
-      <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600">
-        <Sparkles className="h-7 w-7 text-white" />
+    <div className="mx-auto flex h-full max-w-3xl flex-col items-center justify-center px-4 py-16 text-center sm:px-6">
+      <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[color:var(--color-gold)]/25 bg-black/40 px-3 py-1 text-[10px] uppercase tracking-[0.22em] text-[color:var(--color-gold)]">
+        <TierI className="h-3 w-3" />
+        <span>{model.tier} tier · {model.name}</span>
       </div>
-      <h1 className="text-2xl font-semibold tracking-tight">How can I help you today?</h1>
-      <p className="mt-2 text-sm text-slate-400">
-        Ask anything, or start with a suggestion.
+      <h1 className="font-display text-[44px] leading-[1.05] tracking-tight text-white sm:text-[56px]">
+        Good evening, Alex.
+        <br />
+        What shall we <span className="gold-text italic">compose</span> today?
+      </h1>
+      <p className="mt-5 max-w-lg text-[13.5px] leading-relaxed text-neutral-400">
+        A private intelligence workspace, engineered for depth. Every conversation is encrypted,
+        every model curated. Begin below, or select from a starting brief.
       </p>
-      <div className="mt-8 grid w-full grid-cols-1 gap-2 sm:grid-cols-2">
-        {suggestions.map((s) => (
-          <button
-            key={s}
-            onClick={() => onPick(s)}
-            className="rounded-xl border border-white/10 bg-white/5 p-3 text-left text-sm text-slate-200 transition hover:border-indigo-500/40 hover:bg-white/10"
-          >
-            {s}
-          </button>
-        ))}
+
+      <div className="mt-10 grid w-full grid-cols-1 gap-2.5 sm:grid-cols-2">
+        {suggestions.map((s) => {
+          const I = s.icon;
+          return (
+            <button
+              key={s.title}
+              onClick={() => onPick(s.title + ". " + s.body)}
+              className="group relative overflow-hidden rounded-2xl border border-white/[0.08] p-4 text-left transition hover:border-[color:var(--color-gold)]/30"
+              style={{
+                background: "linear-gradient(180deg, rgba(22,18,12,0.5), rgba(10,10,12,0.5))",
+              }}
+            >
+              <div className="flex items-start gap-3">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[color:var(--color-gold)]/25 bg-black/40">
+                  <I className="h-4 w-4 text-[color:var(--color-gold)]" />
+                </span>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="truncate text-[13.5px] font-medium text-white">{s.title}</div>
+                    <ChevronRight className="h-3.5 w-3.5 shrink-0 text-neutral-600 transition group-hover:translate-x-0.5 group-hover:text-[color:var(--color-gold)]" />
+                  </div>
+                  <div className="mt-1 text-[12px] text-neutral-400">{s.body}</div>
+                </div>
+              </div>
+              <span className="pointer-events-none absolute inset-x-0 -bottom-px h-px bg-gradient-to-r from-transparent via-[color:var(--color-gold)]/40 to-transparent opacity-0 transition group-hover:opacity-100" />
+            </button>
+          );
+        })}
+      </div>
+
+      <div className="mt-8 flex items-center gap-4 text-[10.5px] text-neutral-500">
+        <span className="flex items-center gap-1.5"><Shield className="h-3 w-3 text-emerald-400" />E2E encrypted</span>
+        <span className="text-neutral-800">·</span>
+        <span className="flex items-center gap-1.5"><Crown className="h-3 w-3 text-[color:var(--color-gold)]" />SOC 2 · ISO 27001</span>
+        <span className="text-neutral-800">·</span>
+        <span className="flex items-center gap-1.5"><Zap className="h-3 w-3 text-[color:var(--color-gold)]" />Sub-second routing</span>
       </div>
     </div>
   );
