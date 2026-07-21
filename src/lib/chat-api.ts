@@ -1,5 +1,4 @@
-// Real AI backend via Lovable AI Gateway. Server route: /api/chat
-// (see src/routes/api/chat.ts). LOVABLE_API_KEY stays server-side.
+// Real AI backend. Server route: /api/chat keeps provider calls server-side.
 
 export type ChatRole = "user" | "assistant";
 
@@ -32,6 +31,15 @@ export interface AIModel {
 }
 
 export const AI_MODELS: AIModel[] = [
+  {
+    id: "nx-pollinations",
+    name: "Nexus Unlimited",
+    tier: "Signature",
+    tagline: "Pollinations Text · no key · primary unlimited route",
+    context: "OpenAI-compatible",
+    price: "Free",
+    badge: "Primary",
+  },
   {
     id: "nx-flash",
     name: "Nexus Flash 70B",
@@ -130,7 +138,7 @@ export async function sendChatMessage(
     }
     if (res.status === 429) throw new Error("Rate limit reached. Please try again in a moment.");
     if (res.status === 402)
-      throw new Error("AI credits exhausted for this workspace. Add credits to continue.");
+      throw new Error("The active AI provider rejected this request for billing/quota reasons. Switch model or try again later.");
     throw new Error(detail);
   }
 
