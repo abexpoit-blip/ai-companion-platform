@@ -28,7 +28,7 @@ function Fallback() {
   return React.createElement(
     "pre",
     { style: { color: "#ff9aa2", fontFamily: "ui-monospace, monospace", padding: 16 } },
-    "No React component exported from the snippet.\\nAdd `export default` or `export function ComponentName()`."
+    "No React component exported from the snippet.\\nAdd 'export default' or 'export function ComponentName()'."
   );
 }
 
