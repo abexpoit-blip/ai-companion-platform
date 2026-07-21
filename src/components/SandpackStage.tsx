@@ -17,12 +17,23 @@ interface Props {
   tab: Tab;
 }
 
+// Ensure the AI snippet has a default export so `import App from './App'`
+// resolves to a component even when authors used `export function Name()`.
+function ensureDefaultExport(src: string): string {
+  if (/\bexport\s+default\b/.test(src)) return src;
+  const m = src.match(/export\s+(?:function|const|class)\s+([A-Z][A-Za-z0-9_]*)/);
+  if (m) return `${src}\n\nexport default ${m[1]};\n`;
+  const anyDecl = src.match(/(?:function|const|class)\s+([A-Z][A-Za-z0-9_]*)/);
+  if (anyDecl) return `${src}\n\nexport default ${anyDecl[1]};\n`;
+  return `${src}\n\nexport default function App(){ return null; }\n`;
+}
+
 const REACT_INDEX = `import React from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App";
 import "./styles.css";
 
-createRoot(document.getElementById("root")).render(<App />);
+createRoot(document.getElementById("root")).render(React.createElement(App));
 `;
 
 const REACT_STYLES = `:root { color-scheme: dark; }
@@ -121,15 +132,35 @@ const MDX_HTML = (md: string) => {
 </html>`;
 };
 
-function buildFiles(payload: PreviewPayload): { template: "react" | "static"; files: SandpackFiles } {
+type SpTemplate = "react" | "react-ts" | "static" | "vanilla-ts";
+
+function buildFiles(payload: PreviewPayload): { template: SpTemplate; files: SandpackFiles } {
   const lang: PreviewLang = payload.lang;
   if (lang === "react") {
     return {
       template: "react",
       files: {
-        "/App.js": { code: payload.code },
+        "/App.js": { code: ensureDefaultExport(payload.code) },
         "/index.js": { code: REACT_INDEX, hidden: true },
         "/styles.css": { code: REACT_STYLES, hidden: true },
+      },
+    };
+  }
+  if (lang === "react-ts") {
+    return {
+      template: "react-ts",
+      files: {
+        "/App.tsx": { code: ensureDefaultExport(payload.code) },
+        "/index.tsx": { code: REACT_INDEX, hidden: true },
+        "/styles.css": { code: REACT_STYLES, hidden: true },
+      },
+    };
+  }
+  if (lang === "vanilla-ts") {
+    return {
+      template: "vanilla-ts",
+      files: {
+        "/src/index.ts": { code: payload.code + "\n// Output logged to console.\n" },
       },
     };
   }
