@@ -123,6 +123,13 @@
   animation: iris-drift 14s ease-in-out infinite;
 }
 
+@keyframes iris-sheen {
+  0%   { transform: translateX(-100%); }
+  60%  { transform: translateX(120%); }
+  100% { transform: translateX(120%); }
+}
+
+
 /* Premium micro-interactions */
 @keyframes iris-sweep {
   0%   { transform: translateX(-120%) skewX(-18deg); }
