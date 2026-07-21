@@ -61,7 +61,7 @@ export function ThemePicker() {
         ref={btnRef}
         onClick={() => setOpen((v) => !v)}
         aria-label="Theme picker"
-        className="group relative flex h-8 w-8 items-center justify-center overflow-hidden rounded-lg border border-white/[0.08] bg-black/30 text-neutral-300 transition hover:border-[color:var(--color-iris)]/50 hover:text-white"
+        className="group relative flex h-8 w-8 items-center justify-center overflow-hidden rounded-lg border border-slate-200 bg-white/60 text-slate-600 transition hover:border-[color:var(--color-iris)]/50 hover:text-slate-900"
       >
         <span
           aria-hidden
@@ -75,21 +75,21 @@ export function ThemePicker() {
         <>
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
           <div
-            className="absolute right-0 top-[calc(100%+8px)] z-50 w-[320px] overflow-hidden rounded-2xl border border-white/[0.08] p-4 text-neutral-200 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.9)]"
+            className="absolute right-0 top-[calc(100%+8px)] z-50 w-[320px] overflow-hidden rounded-2xl border border-slate-200 p-4 text-slate-700 shadow-[0_30px_80px_-20px_rgba(80,90,160,0.35)]"
             style={{
-              background: "linear-gradient(180deg, rgba(18,16,28,0.92), rgba(8,8,14,0.95))",
+              background: "linear-gradient(180deg, rgba(255,255,255,0.95), rgba(248,246,255,0.95))",
               backdropFilter: "blur(18px)",
             }}
           >
             <div className="mb-3 flex items-center justify-between">
               <div>
-                <div className="text-[10px] uppercase tracking-[0.22em] text-neutral-500">Theme Studio</div>
+                <div className="text-[10px] uppercase tracking-[0.22em] text-slate-500">Theme Studio</div>
                 <div className="mt-0.5 text-sm font-semibold iris-text">Iridescent Chrome</div>
               </div>
               <button
                 onClick={() => setOpen(false)}
                 aria-label="Close"
-                className="rounded-md p-1 text-neutral-400 hover:bg-white/5 hover:text-white"
+                className="rounded-md p-1 text-slate-500 hover:bg-slate-900/5 hover:text-slate-900"
               >
                 <X className="h-3.5 w-3.5" />
               </button>
@@ -107,14 +107,14 @@ export function ThemePicker() {
             <Slider label="Saturation"   min={4} max={22}  value={Math.round(theme.chroma * 100)} onChange={(v) => update({ chroma: v / 100 })} suffix="%" />
 
             <div className="mt-4">
-              <div className="mb-2 text-[10px] uppercase tracking-[0.22em] text-neutral-500">Presets</div>
+              <div className="mb-2 text-[10px] uppercase tracking-[0.22em] text-slate-500">Presets</div>
               <div className="grid grid-cols-3 gap-2">
                 {PRESETS.map((p) => (
                   <button
                     key={p.name}
                     onClick={() => update(p.theme)}
                     className={cn(
-                      "group relative overflow-hidden rounded-lg border border-white/[0.08] p-2 text-left transition hover:border-white/25",
+                      "group relative overflow-hidden rounded-lg border border-slate-200 p-2 text-left transition hover:border-slate-300",
                     )}
                     title={p.name}
                   >
@@ -128,7 +128,7 @@ export function ThemePicker() {
                           oklch(0.72 ${p.theme.chroma + 0.04} ${p.theme.hWarm}))`,
                       }}
                     />
-                    <span className="mt-1.5 block truncate text-[10px] text-neutral-400 group-hover:text-white">{p.name}</span>
+                    <span className="mt-1.5 block truncate text-[10px] text-slate-500 group-hover:text-slate-900">{p.name}</span>
                   </button>
                 ))}
               </div>
@@ -136,7 +136,7 @@ export function ThemePicker() {
 
             <button
               onClick={reset}
-              className="mt-4 inline-flex w-full items-center justify-center gap-1.5 rounded-lg border border-white/10 bg-black/30 px-3 py-2 text-[11px] font-medium uppercase tracking-wider text-neutral-300 transition hover:border-[color:var(--color-iris)]/40 hover:text-white"
+              className="mt-4 inline-flex w-full items-center justify-center gap-1.5 rounded-lg border border-slate-200 bg-white/60 px-3 py-2 text-[11px] font-medium uppercase tracking-wider text-slate-600 transition hover:border-[color:var(--color-iris)]/40 hover:text-slate-900"
             >
               <RotateCcw className="h-3 w-3" /> Reset to Vapor Chrome
             </button>
@@ -153,8 +153,8 @@ function Slider({
   return (
     <div className="mb-3">
       <div className="mb-1 flex items-center justify-between text-[11px]">
-        <span className="text-neutral-400">{label}</span>
-        <span className="font-mono text-neutral-300">{value}{suffix}</span>
+        <span className="text-slate-500">{label}</span>
+        <span className="font-mono text-slate-600">{value}{suffix}</span>
       </div>
       <input
         type="range"

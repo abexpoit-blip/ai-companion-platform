@@ -45,10 +45,10 @@ export function PreviewPanel() {
   return (
     <aside
       ref={asideRef}
-      className="relative flex h-full shrink-0 flex-col border-l border-white/[0.06]"
+      className="relative flex h-full shrink-0 flex-col border-l border-slate-200"
       style={{
         width: `min(100%, ${widthPct}%)`,
-        background: "linear-gradient(180deg, rgba(10,10,18,0.95) 0%, rgba(6,6,12,0.98) 100%)",
+        background: "linear-gradient(180deg, rgba(255,255,255,0.92) 0%, rgba(250,250,255,0.95) 100%)",
         backdropFilter: "blur(14px)",
       }}
     >
@@ -61,29 +61,29 @@ export function PreviewPanel() {
         className="group absolute left-0 top-0 z-20 flex h-full w-1.5 -translate-x-1/2 cursor-col-resize items-center justify-center hover:bg-[color:var(--color-iris)]/30"
         title="Drag to resize"
       >
-        <div className="pointer-events-none flex h-10 w-3 items-center justify-center rounded-full border border-white/10 bg-black/70 opacity-0 shadow-lg transition group-hover:opacity-100">
-          <GripVertical className="h-3 w-3 text-neutral-300" />
+        <div className="pointer-events-none flex h-10 w-3 items-center justify-center rounded-full border border-slate-200 bg-white/80 opacity-0 shadow-lg transition group-hover:opacity-100">
+          <GripVertical className="h-3 w-3 text-slate-600" />
         </div>
       </div>
 
       {/* Header */}
-      <div className="flex items-center gap-2 border-b border-white/[0.06] px-3 py-2">
-        <span className="text-[10px] uppercase tracking-[0.22em] text-neutral-500">Live Workspace</span>
-        <span className="ml-1 rounded-md border border-white/[0.06] bg-black/40 px-1.5 py-0.5 font-mono text-[10px] text-neutral-400">
+      <div className="flex items-center gap-2 border-b border-slate-200 px-3 py-2">
+        <span className="text-[10px] uppercase tracking-[0.22em] text-slate-500">Live Workspace</span>
+        <span className="ml-1 rounded-md border border-slate-200 bg-white/70 px-1.5 py-0.5 font-mono text-[10px] text-slate-500">
           {payload.lang}
         </span>
 
-        <div className="ml-3 flex items-center gap-1 rounded-lg border border-white/[0.06] bg-black/30 p-0.5">
+        <div className="ml-3 flex items-center gap-1 rounded-lg border border-slate-200 bg-white/60 p-0.5">
           <TabBtn active={tab === "preview"} onClick={() => setTab("preview")} icon={Eye} label="Preview" />
           <TabBtn active={tab === "code"} onClick={() => setTab("code")} icon={Code2} label="Code" />
           <TabBtn active={tab === "console"} onClick={() => setTab("console")} icon={Terminal} label="Console" />
         </div>
 
         <div className="ml-auto flex items-center gap-1">
-          <span className="mr-1 hidden font-mono text-[10px] text-neutral-500 sm:inline">{Math.round(widthPct)}%</span>
+          <span className="mr-1 hidden font-mono text-[10px] text-slate-500 sm:inline">{Math.round(widthPct)}%</span>
           <button
             onClick={() => { reloadKeyRef.current += 1; /* force remount via key below */ setTab(tab as PreviewTab); }}
-            className="rounded-md p-1.5 text-neutral-400 hover:bg-white/5 hover:text-white"
+            className="rounded-md p-1.5 text-slate-500 hover:bg-slate-900/5 hover:text-slate-900"
             aria-label="Reload preview"
             title="Reload"
           >
@@ -91,7 +91,7 @@ export function PreviewPanel() {
           </button>
           <button
             onClick={closePreview}
-            className="rounded-md p-1.5 text-neutral-400 hover:bg-white/5 hover:text-white"
+            className="rounded-md p-1.5 text-slate-500 hover:bg-slate-900/5 hover:text-slate-900"
             aria-label="Close preview"
           >
             <X className="h-4 w-4" />
@@ -126,8 +126,8 @@ function TabBtn({
       className={cn(
         "inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-[11px] transition",
         active
-          ? "bg-white/[0.06] text-white shadow-[0_0_0_1px_color-mix(in_oklab,var(--color-iris)_35%,transparent)]"
-          : "text-neutral-400 hover:text-white",
+          ? "bg-white/70 text-slate-900 shadow-[0_0_0_1px_color-mix(in_oklab,var(--color-iris)_35%,transparent)]"
+          : "text-slate-500 hover:text-slate-900",
       )}
     >
       <Icon className="h-3 w-3" />
@@ -139,7 +139,7 @@ function TabBtn({
 function LoadingSkeleton() {
   return (
     <div className="flex h-full items-center justify-center">
-      <div className="flex items-center gap-2 text-[11px] text-neutral-500">
+      <div className="flex items-center gap-2 text-[11px] text-slate-500">
         <span className="h-2 w-2 animate-pulse rounded-full bg-[color:var(--color-iris)]" />
         Booting live workspace…
       </div>

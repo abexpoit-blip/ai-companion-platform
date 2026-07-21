@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, type ComponentPropsW
 import ReactMarkdown, { type Components } from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
+import { oneLight } from "react-syntax-highlighter/dist/esm/styles/prism";
 import {
   Plus,
   Settings,
@@ -506,8 +506,8 @@ function ChatWorkspaceInner() {
               <div className="flex h-full w-full items-center justify-center rounded-full bg-white">
                 <span className="font-display text-base gold-text">A</span>
               </div>
-              <span className="absolute -bottom-0.5 -right-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-black ring-1 ring-slate-200">
-                <Crown className="h-2 w-2 text-[color:var(--color-iris-cyan)]" />
+              <span className="absolute -bottom-0.5 -right-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full ring-1 ring-white" style={{ background: "var(--iris-gradient)" }}>
+                <Crown className="h-2 w-2 text-white" />
               </span>
             </div>
 
@@ -535,7 +535,7 @@ function ChatWorkspaceInner() {
             className="relative overflow-hidden rounded-xl px-3 py-2.5 text-center"
             style={{
               background: "linear-gradient(90deg, rgba(255,45,149,0.10), rgba(0,200,255,0.10), rgba(122,92,255,0.10))",
-              border: "1px solid rgba(255,255,255,0.06)",
+              border: "1px solid rgba(122,92,255,0.18)",
             }}
           >
             <div
@@ -594,8 +594,8 @@ function ChatWorkspaceInner() {
             {modelOpen && (
               <>
                 <div className="fixed inset-0 z-40" onClick={() => setModelOpen(false)} />
-                <div className="absolute left-0 top-[calc(100%+8px)] z-50 w-[360px] overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-2 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.9)]" style={{
-                  backgroundImage: "linear-gradient(180deg, color-mix(in oklab, var(--color-iris-deep) 22%, transparent), rgba(10,10,18,0.6))",
+                <div className="absolute left-0 top-[calc(100%+8px)] z-50 w-[360px] overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-2 shadow-[0_30px_80px_-20px_rgba(80,90,160,0.35)]" style={{
+                  backgroundImage: "linear-gradient(180deg, rgba(255,255,255,0.98), rgba(248,246,255,0.95))",
                 }}>
 
                   <div className="flex items-center justify-between px-2 py-1.5">
@@ -857,15 +857,15 @@ function CodeBlock({ language, value }: { language: string; value: string }) {
   };
   return (
     <div className="group relative my-4 overflow-hidden rounded-xl border border-slate-200/80" style={{
-      background: "linear-gradient(180deg, #0a0908 0%, #0d0b09 100%)",
-      boxShadow: "inset 0 1px 0 rgba(255,220,150,0.04)",
+      background: "linear-gradient(180deg, #ffffff 0%, #f7f7fb 100%)",
+      boxShadow: "0 10px 30px -18px rgba(80,90,160,0.18), inset 0 1px 0 rgba(255,255,255,0.9)",
     }}>
-      <div className="flex items-center justify-between border-b border-slate-200/70 bg-white/70 px-3 py-1.5">
+      <div className="flex items-center justify-between border-b border-slate-200/70 bg-white/80 px-3 py-1.5">
         <div className="flex items-center gap-2">
           <span className="flex gap-1">
-            <span className="h-2 w-2 rounded-full bg-white/10" />
-            <span className="h-2 w-2 rounded-full bg-white/10" />
-            <span className="h-2 w-2 rounded-full bg-[color:var(--color-gold)]/40" />
+            <span className="h-2 w-2 rounded-full bg-[color:var(--color-iris-warm)]/50" />
+            <span className="h-2 w-2 rounded-full bg-[color:var(--color-iris)]/50" />
+            <span className="h-2 w-2 rounded-full bg-[color:var(--color-iris-cyan)]/60" />
           </span>
           <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500">{language}</span>
         </div>
@@ -873,7 +873,7 @@ function CodeBlock({ language, value }: { language: string; value: string }) {
           {previewable && (
             <button
               onClick={() => openPreview(value, language)}
-              className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-[10.5px] text-[color:var(--color-iris-cyan)] hover:bg-[color:var(--color-iris)]/10"
+              className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-[10.5px] text-[color:var(--color-iris-deep)] hover:bg-[color:var(--color-iris)]/10"
               aria-label="Open in live preview"
               title="Open in live workspace"
             >
@@ -883,17 +883,17 @@ function CodeBlock({ language, value }: { language: string; value: string }) {
           )}
           <button
             onClick={onCopy}
-            className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-[10.5px] text-slate-500 hover:bg-slate-900/5 hover:text-[color:var(--color-gold)]"
+            className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-[10.5px] text-slate-500 hover:bg-slate-900/5 hover:text-[color:var(--color-iris-deep)]"
             aria-label="Copy code"
           >
-            {copied ? <Check className="h-3 w-3 text-[color:var(--color-gold)]" /> : <Copy className="h-3 w-3" />}
+            {copied ? <Check className="h-3 w-3 text-[color:var(--color-iris-deep)]" /> : <Copy className="h-3 w-3" />}
             <span className="uppercase tracking-wider">{copied ? "Copied" : "Copy"}</span>
           </button>
         </div>
       </div>
       <SyntaxHighlighter
         language={language}
-        style={oneDark}
+        style={oneLight}
         PreTag="div"
         customStyle={{
           margin: 0,
@@ -999,7 +999,8 @@ function TypingIndicator({ model }: { model: AIModel }) {
           Axis · <span className="normal-case tracking-normal font-mono text-[color:var(--color-iris-cyan)]/90">{model.name}</span>
         </div>
         <div className="inline-flex items-center gap-2 rounded-2xl border border-slate-200/70 px-4 py-3" style={{
-          background: "linear-gradient(180deg, rgba(18,16,28,0.7), rgba(10,10,18,0.7))",
+          background: "linear-gradient(180deg, rgba(255,255,255,0.92), rgba(250,250,255,0.86))",
+          boxShadow: "0 10px 30px -18px rgba(80,90,160,0.25), inset 0 1px 0 rgba(255,255,255,0.9)",
         }}>
           <div className="relative h-4 w-16 overflow-hidden rounded-full bg-slate-100">
             <div className="absolute inset-0 shimmer-gold" />
@@ -1061,7 +1062,7 @@ function EmptyState({ onPick, model }: { onPick: (q: string) => void; model: AIM
 
   return (
     <div className="mx-auto flex h-full w-full max-w-5xl flex-col items-center justify-center px-4 py-10 sm:px-6">
-      <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white/70 px-3 py-1 text-[10px] uppercase tracking-[0.22em] text-[color:var(--color-iris-soft)] backdrop-blur">
+      <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white/80 px-3 py-1 text-[10px] uppercase tracking-[0.22em] text-[color:var(--color-iris-deep)] backdrop-blur">
         <span className="h-1.5 w-1.5 rounded-full bg-[color:var(--color-iris-cyan)] shadow-[0_0_8px_rgba(120,200,240,0.9)]" />
         <TierI className="h-3 w-3" />
         <span>{model.tier} · {model.name}</span>

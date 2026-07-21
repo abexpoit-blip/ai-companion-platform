@@ -245,7 +245,7 @@ function ErrorBanner() {
         </div>
         <button
           onClick={copy}
-          className="inline-flex shrink-0 items-center gap-1 rounded-md border border-red-400/30 bg-black/30 px-2 py-1 text-[10px] text-red-100 hover:bg-black/50"
+          className="inline-flex shrink-0 items-center gap-1 rounded-md border border-red-400/30 bg-white/60 px-2 py-1 text-[10px] text-red-100 hover:bg-white/70"
           aria-label="Copy error"
         >
           {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
@@ -273,7 +273,7 @@ function ConsolePane() {
       <div className="absolute right-2 top-2 z-10 flex gap-1">
         <button
           onClick={copyAll}
-          className="inline-flex items-center gap-1 rounded-md border border-white/10 bg-black/60 px-2 py-1 text-[10.5px] text-neutral-200 hover:bg-black/80"
+          className="inline-flex items-center gap-1 rounded-md border border-slate-200 bg-white/70 px-2 py-1 text-[10.5px] text-slate-700 hover:bg-white/85"
           aria-label="Copy console output"
           title="Copy all logs"
         >
@@ -282,7 +282,7 @@ function ConsolePane() {
         </button>
         <button
           onClick={() => sandpack.runSandpack()}
-          className="inline-flex items-center gap-1 rounded-md border border-white/10 bg-black/60 px-2 py-1 text-[10.5px] text-neutral-200 hover:bg-black/80"
+          className="inline-flex items-center gap-1 rounded-md border border-slate-200 bg-white/70 px-2 py-1 text-[10.5px] text-slate-700 hover:bg-white/85"
           title="Re-run"
         >
           Re-run
