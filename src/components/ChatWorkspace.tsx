@@ -506,8 +506,8 @@ function ChatWorkspaceInner() {
               <div className="flex h-full w-full items-center justify-center rounded-full bg-white">
                 <span className="font-display text-base gold-text">A</span>
               </div>
-              <span className="absolute -bottom-0.5 -right-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-black ring-1 ring-slate-200">
-                <Crown className="h-2 w-2 text-[color:var(--color-iris-cyan)]" />
+              <span className="absolute -bottom-0.5 -right-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full ring-1 ring-white" style={{ background: "var(--iris-gradient)" }}>
+                <Crown className="h-2 w-2 text-white" />
               </span>
             </div>
 
