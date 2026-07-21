@@ -248,21 +248,22 @@ export function ChatWorkspace() {
           sidebarOpen ? "translate-x-0" : "-translate-x-full md:w-0 md:-translate-x-0 md:overflow-hidden md:border-0",
         )}
         style={{
-          background: "linear-gradient(180deg, rgba(20,17,12,0.9) 0%, rgba(10,10,12,0.92) 100%)",
-          backdropFilter: "blur(14px)",
+          background: "linear-gradient(180deg, rgba(10,10,18,0.72) 0%, rgba(6,6,12,0.85) 100%)",
+          backdropFilter: "blur(18px)",
         }}
       >
         {/* Brand */}
         <div className="flex items-center gap-3 px-5 pt-5 pb-4">
-          <div className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-[color:var(--color-gold)]/40" style={{
-            background: "linear-gradient(135deg, oklch(0.28 0.05 80), oklch(0.14 0.02 60))",
-            boxShadow: "inset 0 1px 0 rgba(255,220,150,0.25), 0 8px 24px -12px rgba(200,160,80,0.6)",
+          <div className="relative flex h-10 w-10 items-center justify-center rounded-xl p-[1.5px]" style={{
+            background: "linear-gradient(135deg, oklch(0.78 0.13 285), oklch(0.84 0.11 210), oklch(0.7 0.17 320))",
           }}>
-            <span className="font-display text-lg leading-none gold-text">C</span>
-            <span className="absolute -bottom-1 -right-1 h-2 w-2 rounded-full bg-[color:var(--color-gold)] shadow-[0_0_10px_rgba(220,180,90,0.9)]" />
+            <div className="flex h-full w-full items-center justify-center rounded-[10px] bg-[#050510]">
+              <span className="font-display text-lg font-bold leading-none gold-text">C</span>
+            </div>
+            <span className="absolute -bottom-1 -right-1 h-2.5 w-2.5 rounded-full bg-[color:var(--color-iris-cyan)] shadow-[0_0_12px_rgba(120,200,240,0.9)]" />
           </div>
           <div className="min-w-0">
-            <div className="font-display text-[17px] leading-tight tracking-tight">
+            <div className="font-display text-[17px] font-bold leading-tight tracking-tight text-white">
               CodeAxis <span className="gold-text">Studio</span>
             </div>
             <div className="text-[10px] uppercase tracking-[0.18em] text-neutral-500">Private Intelligence</div>
