@@ -388,43 +388,130 @@ export function ChatWorkspace() {
   );
 }
 
+const markdownComponents: Components = {
+  code(props) {
+    const { className, children, node, ...rest } = props as ComponentPropsWithoutRef<"code"> & {
+      node?: unknown;
+      inline?: boolean;
+    };
+    const match = /language-(\w+)/.exec(className || "");
+    const raw = String(children ?? "").replace(/\n$/, "");
+    const isBlock = raw.includes("\n") || Boolean(match);
+    if (!isBlock) {
+      return (
+        <code
+          {...rest}
+          className="rounded bg-white/10 px-1.5 py-0.5 font-mono text-[0.85em] text-indigo-300"
+        >
+          {children}
+        </code>
+      );
+    }
+    return <CodeBlock language={match?.[1] ?? "text"} value={raw} />;
+  },
+  pre({ children }) {
+    // Let <code> render its own <pre> via SyntaxHighlighter
+    return <>{children}</>;
+  },
+  table({ children }) {
+    return (
+      <div className="my-3 overflow-x-auto rounded-lg border border-white/10">
+        <table className="w-full border-collapse text-sm">{children}</table>
+      </div>
+    );
+  },
+  th({ children }) {
+    return <th className="border-b border-white/10 bg-white/5 px-3 py-2 text-left font-semibold">{children}</th>;
+  },
+  td({ children }) {
+    return <td className="border-b border-white/5 px-3 py-2 align-top">{children}</td>;
+  },
+  a({ children, href }) {
+    return (
+      <a href={href} target="_blank" rel="noreferrer" className="text-indigo-300 underline underline-offset-2 hover:text-indigo-200">
+        {children}
+      </a>
+    );
+  },
+};
+
+function CodeBlock({ language, value }: { language: string; value: string }) {
+  const [copied, setCopied] = useState(false);
+  const onCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(value);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch {
+      /* ignore */
+    }
+  };
+  return (
+    <div className="group relative my-3 overflow-hidden rounded-lg border border-white/10 bg-[#0b0d12]">
+      <div className="flex items-center justify-between border-b border-white/5 bg-white/[0.03] px-3 py-1.5">
+        <span className="font-mono text-[11px] uppercase tracking-wider text-slate-400">{language}</span>
+        <button
+          onClick={onCopy}
+          className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-[11px] text-slate-300 hover:bg-white/10 hover:text-white"
+          aria-label="Copy code"
+        >
+          {copied ? <Check className="h-3 w-3 text-emerald-400" /> : <Copy className="h-3 w-3" />}
+          {copied ? "Copied" : "Copy"}
+        </button>
+      </div>
+      <SyntaxHighlighter
+        language={language}
+        style={oneDark}
+        PreTag="div"
+        customStyle={{
+          margin: 0,
+          background: "transparent",
+          padding: "12px 14px",
+          fontSize: "12.5px",
+          lineHeight: "1.55",
+        }}
+        codeTagProps={{ style: { fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace" } }}
+      >
+        {value}
+      </SyntaxHighlighter>
+    </div>
+  );
+}
+
 function MessageBubble({ message }: { message: ChatMessage }) {
   const isUser = message.role === "user";
   return (
-    <div className={cn("flex gap-3", isUser ? "flex-row-reverse" : "flex-row")}>
+    <div className={cn("flex gap-2 sm:gap-3", isUser ? "flex-row-reverse" : "flex-row")}>
       <div
         className={cn(
           "flex h-8 w-8 shrink-0 items-center justify-center rounded-full",
-          isUser
-            ? "bg-slate-700"
-            : "bg-gradient-to-br from-indigo-500 to-violet-600",
+          isUser ? "bg-slate-700" : "bg-gradient-to-br from-indigo-500 to-violet-600",
         )}
       >
-        {isUser ? (
-          <User className="h-4 w-4 text-white" />
-        ) : (
-          <Sparkles className="h-4 w-4 text-white" />
-        )}
+        {isUser ? <User className="h-4 w-4 text-white" /> : <Sparkles className="h-4 w-4 text-white" />}
       </div>
       <div
         className={cn(
-          "max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed",
+          "min-w-0 max-w-[90%] rounded-2xl px-4 py-3 text-sm leading-relaxed sm:max-w-[85%]",
           isUser
-            ? "bg-indigo-600/20 text-slate-100 border border-indigo-500/20"
-            : "bg-[#141824] text-slate-200 border border-white/5",
+            ? "border border-indigo-500/20 bg-indigo-600/20 text-slate-100"
+            : "border border-white/5 bg-[#141824] text-slate-200",
         )}
       >
         {isUser ? (
-          <div className="whitespace-pre-wrap">{message.content}</div>
+          <div className="whitespace-pre-wrap break-words">{message.content}</div>
         ) : (
-          <div className="prose prose-invert prose-sm max-w-none prose-pre:bg-[#0b0d12] prose-pre:border prose-pre:border-white/10 prose-code:text-indigo-300">
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>{message.content}</ReactMarkdown>
+          <div className="prose prose-invert prose-sm max-w-none break-words prose-p:my-2 prose-headings:mt-3 prose-headings:mb-2 prose-ul:my-2 prose-ol:my-2 prose-li:my-0.5 prose-strong:text-white">
+            <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
+              {message.content}
+            </ReactMarkdown>
           </div>
         )}
       </div>
     </div>
   );
 }
+
 
 function TypingIndicator() {
   return (
