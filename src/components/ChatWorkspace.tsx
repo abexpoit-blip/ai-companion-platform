@@ -781,65 +781,124 @@ function TypingIndicator({ model }: { model: AIModel }) {
 }
 
 function EmptyState({ onPick, model }: { onPick: (q: string) => void; model: AIModel }) {
-  const suggestions = [
-    { icon: Sparkle, title: "Draft an investor memo", body: "Series B narrative with defensible metrics." },
-    { icon: Diamond, title: "Refactor a React module", body: "Reduce complexity, keep the public API stable." },
-    { icon: Crown, title: "Distill a 40-page dossier", body: "Executive summary with cited evidence." },
-    { icon: Zap, title: "Draft a SQL cohort query", body: "Top customers by revenue in the last 30 days." },
-  ];
   const TierI = tierIcon(model.tier);
+  const bento = [
+    {
+      key: "hero",
+      cls: "sm:col-span-2 sm:row-span-2",
+      accent: "oklch(0.62 0.19 275)",
+      icon: Zap,
+      eyebrow: "Signature capability",
+      title: "Architect entire systems",
+      body: "Design end-to-end product architectures with contextual awareness — from schema to shipping code.",
+      prompt: "Draft a scalable multi-tenant SaaS architecture with auth, billing and analytics.",
+      large: true,
+    },
+    {
+      key: "ui",
+      cls: "sm:col-span-1",
+      accent: "oklch(0.84 0.11 210)",
+      icon: Sparkle,
+      eyebrow: "Design",
+      title: "UI systems",
+      body: "Generate accessible, vapor-styled components.",
+      prompt: "Design a premium pricing page with 3 tiers, iridescent glass cards and a comparison table.",
+    },
+    {
+      key: "data",
+      cls: "sm:col-span-1",
+      accent: "oklch(0.7 0.17 320)",
+      icon: Diamond,
+      eyebrow: "Analysis",
+      title: "Data flow",
+      body: "Map intricate state and query patterns.",
+      prompt: "Trace the state flow of a real-time collaborative editor and identify bottlenecks.",
+    },
+    {
+      key: "cloud",
+      cls: "sm:col-span-2",
+      accent: "oklch(0.78 0.13 285)",
+      icon: Shield,
+      eyebrow: "Infrastructure",
+      title: "Cloud architecture",
+      body: "Deploy instantly to global infrastructure with a hardened, observable topology.",
+      prompt: "Propose a globally-distributed edge deployment with failover and cost projections.",
+      cta: true,
+    },
+  ];
+
   return (
-    <div className="mx-auto flex h-full max-w-3xl flex-col items-center justify-center px-4 py-16 text-center sm:px-6">
-      <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[color:var(--color-gold)]/25 bg-black/40 px-3 py-1 text-[10px] uppercase tracking-[0.22em] text-[color:var(--color-gold)]">
+    <div className="mx-auto flex h-full w-full max-w-5xl flex-col items-center justify-center px-4 py-10 sm:px-6">
+      <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-[10px] uppercase tracking-[0.22em] text-[color:var(--color-iris-soft)] backdrop-blur">
+        <span className="h-1.5 w-1.5 rounded-full bg-[color:var(--color-iris-cyan)] shadow-[0_0_8px_rgba(120,200,240,0.9)]" />
         <TierI className="h-3 w-3" />
-        <span>{model.tier} tier · {model.name}</span>
+        <span>{model.tier} · {model.name}</span>
       </div>
-      <h1 className="font-display text-[44px] leading-[1.05] tracking-tight text-white sm:text-[56px]">
-        Good evening, Alex.
-        <br />
-        What shall we <span className="gold-text italic">compose</span> today?
+      <h1 className="text-center font-display text-[44px] font-extrabold leading-[1.02] tracking-tight text-white sm:text-[60px]">
+        What's next,{" "}
+        <span className="gold-text italic">Creative?</span>
       </h1>
-      <p className="mt-5 max-w-lg text-[13.5px] leading-relaxed text-neutral-400">
-        A private intelligence workspace, engineered for depth. Every conversation is encrypted,
-        every model curated. Begin below, or select from a starting brief.
+      <p className="mt-4 max-w-xl text-center text-[14px] leading-relaxed text-neutral-400">
+        Architect your vision with CodeAxis Studio — the private intelligence workspace engineered for enterprise depth and taste.
       </p>
 
-      <div className="mt-10 grid w-full grid-cols-1 gap-2.5 sm:grid-cols-2">
-        {suggestions.map((s) => {
-          const I = s.icon;
+      <div className="mt-10 grid w-full grid-cols-1 grid-rows-none gap-3 sm:grid-cols-3 sm:grid-rows-2 sm:gap-4" style={{ minHeight: "clamp(280px, 40vh, 380px)" }}>
+        {bento.map((b) => {
+          const I = b.icon;
           return (
             <button
-              key={s.title}
-              onClick={() => onPick(s.title + ". " + s.body)}
-              className="group relative overflow-hidden rounded-2xl border border-white/[0.08] p-4 text-left transition hover:border-[color:var(--color-gold)]/30"
+              key={b.key}
+              onClick={() => onPick(b.prompt)}
+              className={cn(
+                "group relative flex flex-col overflow-hidden rounded-3xl border border-white/[0.08] p-5 text-left transition hover:border-white/20 sm:p-6",
+                b.cls,
+              )}
               style={{
-                background: "linear-gradient(180deg, rgba(22,18,12,0.5), rgba(10,10,12,0.5))",
+                background: "linear-gradient(180deg, rgba(20,20,32,0.55), rgba(10,10,18,0.55))",
+                boxShadow: "inset 0 1px 0 rgba(200,220,255,0.05)",
               }}
             >
-              <div className="flex items-start gap-3">
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[color:var(--color-gold)]/25 bg-black/40">
-                  <I className="h-4 w-4 text-[color:var(--color-gold)]" />
-                </span>
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center justify-between gap-2">
-                    <div className="truncate text-[13.5px] font-medium text-white">{s.title}</div>
-                    <ChevronRight className="h-3.5 w-3.5 shrink-0 text-neutral-600 transition group-hover:translate-x-0.5 group-hover:text-[color:var(--color-gold)]" />
-                  </div>
-                  <div className="mt-1 text-[12px] text-neutral-400">{s.body}</div>
+              {/* accent glow */}
+              <div
+                aria-hidden
+                className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full opacity-40 blur-3xl transition-all duration-700 group-hover:opacity-90 group-hover:scale-110"
+                style={{ background: `radial-gradient(circle, ${b.accent}, transparent 70%)` }}
+              />
+              {/* iridescent hairline on hover */}
+              <span aria-hidden className="pointer-events-none absolute inset-x-0 -top-px h-px opacity-0 transition group-hover:opacity-100" style={{ background: `linear-gradient(90deg, transparent, ${b.accent}, transparent)` }} />
+
+              <div className="relative flex items-start justify-between gap-3">
+                <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10" style={{ background: `linear-gradient(135deg, ${b.accent} / 0.25, transparent)`, backgroundColor: "rgba(255,255,255,0.03)" }}>
+                  <I className="h-5 w-5" style={{ color: b.accent, filter: `drop-shadow(0 0 6px ${b.accent})` }} />
                 </div>
+                <span className="text-[9.5px] font-semibold uppercase tracking-[0.2em] text-neutral-500">{b.eyebrow}</span>
               </div>
-              <span className="pointer-events-none absolute inset-x-0 -bottom-px h-px bg-gradient-to-r from-transparent via-[color:var(--color-gold)]/40 to-transparent opacity-0 transition group-hover:opacity-100" />
+
+              <div className={cn("relative", b.large ? "mt-auto pt-8" : "mt-4")}>
+                <h3 className={cn("font-display font-bold text-white", b.large ? "text-2xl sm:text-3xl" : "text-lg")}>
+                  {b.title}
+                </h3>
+                <p className={cn("mt-2 leading-relaxed text-neutral-400", b.large ? "text-[13.5px] max-w-sm" : "text-[12px]")}>
+                  {b.body}
+                </p>
+                {(b.large || b.cta) && (
+                  <div className="mt-4 inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-widest text-white/80 transition group-hover:text-white">
+                    Compose
+                    <ChevronRight className="h-3.5 w-3.5 transition group-hover:translate-x-0.5" />
+                  </div>
+                )}
+              </div>
             </button>
           );
         })}
       </div>
 
-      <div className="mt-8 flex items-center gap-4 text-[10.5px] text-neutral-500">
+      <div className="mt-8 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-[10.5px] text-neutral-500">
         <span className="flex items-center gap-1.5"><Shield className="h-3 w-3 text-emerald-400" />E2E encrypted</span>
         <span className="text-neutral-800">·</span>
-        <span className="flex items-center gap-1.5"><Crown className="h-3 w-3 text-[color:var(--color-gold)]" />SOC 2 · ISO 27001</span>
+        <span className="flex items-center gap-1.5"><Crown className="h-3 w-3 text-[color:var(--color-iris)]" />SOC 2 · ISO 27001</span>
         <span className="text-neutral-800">·</span>
-        <span className="flex items-center gap-1.5"><Zap className="h-3 w-3 text-[color:var(--color-gold)]" />Sub-second routing</span>
+        <span className="flex items-center gap-1.5"><Zap className="h-3 w-3 text-[color:var(--color-iris-cyan)]" />Sub-second routing</span>
       </div>
     </div>
   );
